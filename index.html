@@ -528,7 +528,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.60</div>
+<div id="ver-label" title="Tap to copy version">v3.61</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -1530,7 +1530,7 @@ function gsPost(f,w,h,inv,src,long){const n=w*h;if(!gsPrevF||gsPrevF.length!==n)
 function modStep(eng,src,th){const now=performance.now();if(th.pending){const m=th.pending;th.pending=null;return m;}
   if(eng.busy||now-th.last<th.gap)return null;eng.busy=true;th.last=now;const t0=now;
   modnetRun(eng,src,th.short||256).then(r=>{if(r)th.pending=gsPost(r.f,r.w,r.h,false,src,th.long||448);const d=performance.now()-t0;th.gap=Math.max(66,d*1.2);th.n=(th.n||0)+1;th.avg=th.avg?th.avg*0.7+d*0.3:d;
-    if(th.live&&th.n>=4&&th.avg>260&&gsGet().aiQ==='pro'){gsSave({aiQ:'best'});toast('Pro is too heavy to run live on this phone, so live uses Best. Studio Max quality still uses Pro.');camApply();}})
+    if(th.live&&th.n>=4&&th.avg>260&&gsGet().aiQ==='pro'){settings.proLiveFail=true;gsSave({aiQ:'best'});setTimeout(()=>{if($('bg-sheet').classList.contains('open'))bsRender();},50);toast('Pro is too heavy to run live on this phone, so live uses Best. Studio Max quality still uses Pro.');camApply();}})
   .catch(e=>{console.warn('modnet',e);}).finally(()=>{eng.busy=false;});return null;}
 async function gsMaskAsync(seg,src,long,short){if(seg.kind==='modnet'){const r=await modnetRun(seg,src,short||512);return r?gsPost(r.f,r.w,r.h,false,src,long):null;}return gsSegment(seg,src,long);}
 // automatic green pick: median of the clearly green pixels
@@ -2254,7 +2254,7 @@ $('tr-slow').onclick=e=>{e.stopPropagation();trSpeed(-5);};$('tr-fast').onclick=
 async function bsRender(){const g=gsGet();const live=settings.gsLive||'off';document.querySelectorAll('#bs-live button').forEach(b=>b.classList.toggle('on',b.dataset.v===live));
   $('bs-livenote').textContent=live==='off'?'Off: no background. Pick one below to turn on Preview.':live==='preview'?'Preview: you see the background, but the take is saved with your real surroundings (change it later in Studio).':'Record with background: the background is built into the take.';
   document.querySelectorAll('#bs-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.mode));$('bs-pick').style.display=g.mode==='ai'?'none':'';
-  $('bs-ai').style.display=g.mode==='ai'?'':'none';$('bs-keep').value=g.aiKeep;document.querySelectorAll('#bs-q button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.aiQ));$('bs-green').style.display=g.mode==='ai'?'none':'';$('bs-auto').style.display=g.mode==='ai'?'none':'';$('bs-edge').value=g.edge;$('bs-dn').value=g.denoise;$('bs-lock').classList.toggle('on',!!settings.camLock);$('bs-unsnap').style.display=gsl.clean?'':'none';$('bs-snapnote').textContent=gsl.clean?'✓ set':'';$('bs-soft').value=g.aiSoft;$('bs-grow').value=Math.max(0,-g.shrink);
+  $('bs-ai').style.display=g.mode==='ai'?'':'none';$('bs-keep').value=g.aiKeep;document.querySelectorAll('#bs-q button').forEach(b=>{b.classList.toggle('on',b.dataset.v===g.aiQ);if(b.dataset.v==='pro')b.textContent=settings.proLiveFail?'Pro (Studio)':'Pro';});$('bs-green').style.display=g.mode==='ai'?'none':'';$('bs-auto').style.display=g.mode==='ai'?'none':'';$('bs-edge').value=g.edge;$('bs-dn').value=g.denoise;$('bs-lock').classList.toggle('on',!!settings.camLock);$('bs-unsnap').style.display=gsl.clean?'':'none';$('bs-snapnote').textContent=gsl.clean?'✓ set':'';$('bs-soft').value=g.aiSoft;$('bs-grow').value=Math.max(0,-g.shrink);
   $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
   const cur=((settings.gsShowBg||{})[show&&show.id])||g.bg;const cust=await bgAll();
   $('bs-tiles').innerHTML=GS_BUILTIN.map(b=>`<button data-id="${b[0]}" class="${b[0]===cur?'on':''}" style="background:${b[2].length>1?`linear-gradient(180deg,${b[2].join(',')})`:b[2][0]}">${esc(b[1])}</button>`).join('')
@@ -2274,7 +2274,7 @@ $('bs-auto').onclick=e=>{e.stopPropagation();const v=$('cam-video');const k=v.vi
 $('bs-lock').onclick=async e=>{e.stopPropagation();const on=!settings.camLock;if(await camLock(on)||!on){settings.camLock=on;saveSettings();}bsRender();};
 $('bs-snap').onclick=e=>{e.stopPropagation();const v=$('cam-video');if(!v.videoWidth){toast('Turn the camera on first (📷)');return;}let n=3;toast('Step out of the picture… 3');const iv=setInterval(()=>{n--;if(n>0){toast('Step out of the picture… '+n);return;}clearInterval(iv);gsl.clean=gsCleanCanvas(v);if(gsl.keyer)gsl.keyer.setClean(gsl.clean);toast('📸 Empty background saved. Keep the phone still.');bsRender();},1000);};
 $('bs-unsnap').onclick=e=>{e.stopPropagation();gsl.clean=null;if(gsl.keyer)gsl.keyer.setClean(null);bsRender();};
-document.querySelectorAll('#bs-q button').forEach(b=>b.onclick=async e=>{e.stopPropagation();gsSave({aiQ:b.dataset.v});gsMaskPrev=null;gsPrevF=null;if(b.dataset.v!=='fast')toast(b.dataset.v==='pro'?'Loading Pro quality (about 25 MB the first time)…':'Loading Best quality…');bsRender();await camApply();});
+document.querySelectorAll('#bs-q button').forEach(b=>b.onclick=async e=>{e.stopPropagation();if(b.dataset.v==='pro'&&settings.proLiveFail){toast('On this phone Pro runs in 🎬 Studio → Max quality. Live uses Best.');return;}gsSave({aiQ:b.dataset.v});gsMaskPrev=null;gsPrevF=null;if(b.dataset.v!=='fast')toast(b.dataset.v==='pro'?'Loading Pro quality (about 25 MB the first time)…':'Loading Best quality…');bsRender();await camApply();});
 let bsPicking=false;$('bs-pick').onclick=e=>{e.stopPropagation();if(camSet().mode==='off'){toast('Turn the camera on first (📷)');return;}bsPicking=true;$('bs-pick').classList.add('on');toast('Now tap the green screen behind you');};
 $('perf').addEventListener('pointerdown',e=>{if(!bsPicking||e.target.closest('#bg-sheet,.thumb'))return;e.preventDefault();e.stopPropagation();const v=$('cam-video');if(!v.videoWidth)return;
   const host=document.body.classList.contains('cam-corner')?$('cam-pip'):$('perf');const r=host.getBoundingClientRect();let x=e.clientX-r.left,y=e.clientY-r.top;if(v.classList.contains('cam-mirror'))x=r.width-x;
@@ -2784,7 +2784,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.60');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.61');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
