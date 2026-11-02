@@ -528,7 +528,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.58</div>
+<div id="ver-label" title="Tap to copy version">v3.59</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -798,7 +798,7 @@ KING (V.O.): Hear my command!
     <div class="bs-tiles" id="bs-tiles"></div>
     <div class="cp-row"><div class="seg" id="bs-mode"><button data-v="green">Green screen</button><button data-v="ai">AI cutout</button></div><button class="tbtn" id="bs-pick">💧 Tap the green</button></div>
     <div class="bs-note" id="bs-modenote"></div>
-    <div id="bs-ai"><div class="cp-row"><span class="cp-lbl">Keep more of me</span><input type="range" id="bs-keep" min="0" max="1" step="0.05" data-k="aiKeep"></div>
+    <div id="bs-ai"><div class="cp-row"><span class="cp-lbl">Quality</span><div class="seg" id="bs-q"><button data-v="fast">Fast</button><button data-v="best">Best</button></div></div><div class="cp-row"><span class="cp-lbl">Keep more of me</span><input type="range" id="bs-keep" min="0" max="1" step="0.05" data-k="aiKeep"></div>
       <div class="cp-row"><span class="cp-lbl">Edge smoothing</span><input type="range" id="bs-soft" min="0" max="1" step="0.05" data-k="aiSoft"></div>
       <div class="cp-row"><span class="cp-lbl">Grow outline</span><input type="range" id="bs-grow" min="0" max="1" step="0.05" data-k="grow"></div></div>
     <div class="bs-note">Fine-tune (sliders, edges, crop, presets) in 🎬 Studio on any take.</div>
@@ -1480,11 +1480,16 @@ function makeKeyer(canvas){const gl=canvas.getContext('webgl',{preserveDrawingBu
 let gsSegPs={},gsSegTs=0,gsMaskBuf=null,gsMaskPrev=null;
 function gsSegLoad(q){q=q||gsGet().aiQ||'best';if(gsSegPs[q])return gsSegPs[q];const model=q==='best'?'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite':'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite';
   const p=(async()=>{const base='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';const v=await import(base+'/vision_bundle.mjs');const fs=await v.FilesetResolver.forVisionTasks(base+'/wasm');
-    const seg=await v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:model,delegate:'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});seg._q=q;return seg;})();
+    const seg=await v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:model,delegate:q==='best'?'CPU':'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});seg._q=q;return seg;})();
   gsSegPs[q]=p;p.catch(()=>{delete gsSegPs[q];});return p;}
 const gsSmall=document.createElement('canvas');gsSmall.width=gsSmall.height=256;const gsSmallCtx=gsSmall.getContext('2d',{alpha:false});
 function gsMaskT(seg,src,th){const now=performance.now();if(now-th.last<th.gap)return null;const m=gsSegment(seg,src);const d=performance.now()-now;th.last=performance.now();th.gap=Math.min(300,Math.max(66,d*3));return m;}
-function gsSegment(seg,src){gsSegTs+=33;let out=null;try{gsSmallCtx.drawImage(src,0,0,256,256);const r=seg.segmentForVideo(gsSmall,gsSegTs);const ms=r.confidenceMasks||[];const inv=ms.length>2;const m=inv?ms[0]:ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length){gsMaskBuf=new Uint8Array(f.length);gsMaskPrev=null;}if(!gsMaskPrev)gsMaskPrev=new Float32Array(f.length).fill(-1);
+function r_close(r){try{r.close&&r.close();}catch(e){}}
+function gsFallbackFast(){if(gsGet().aiQ==='fast')return;gsSave({aiQ:'fast'});gsMaskPrev=null;toast('Best quality did not work on this phone, so AI cutout switched to Fast');gsSegLoad('fast').then(sg=>{if(gsl.seg&&gsl.seg._q==='best')gsl.seg=sg;if(st.seg&&st.seg._q==='best')st.seg=sg;if($('bg-sheet').classList.contains('open'))bsRender();if($('studio').classList.contains('active'))stRenderTab();}).catch(()=>{});}
+function gsSegment(seg,src){gsSegTs+=33;let out=null;try{gsSmallCtx.drawImage(src,0,0,256,256);const r=seg.segmentForVideo(gsSmall,gsSegTs);const r_=r;const ms=r.confidenceMasks||[];const inv=ms.length>2;const m=inv?ms[0]:ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length){gsMaskBuf=new Uint8Array(f.length);gsMaskPrev=null;}if(!gsMaskPrev)gsMaskPrev=new Float32Array(f.length).fill(-1);
+      if(seg._q==='best'&&!seg._ok){const W=m.width;let rough=0,cnt=0,bad=0;for(let y=8;y<m.height;y+=16)for(let x=0;x<W-1;x++){const a=f[y*W+x],b=f[y*W+x+1];if(!(a>=0&&a<=1))bad++;rough+=Math.abs(a-b);cnt++;}
+        const r=rough/Math.max(1,cnt);seg._n=(seg._n||0)+1;if(r>0.12||bad>cnt*0.01)seg._bad=(seg._bad||0)+1;
+        if(seg._bad>=3){r_close(r_);gsFallbackFast();return null;}if(seg._n>=8&&!seg._bad)seg._ok=true;}
       for(let i=0;i<f.length;i++){let v=inv?1-f[i]:f[i];const pv=gsMaskPrev[i];if(pv>=0)v=pv*0.45+v*0.55;gsMaskPrev[i]=v;gsMaskBuf[i]=v*255;}out={w:m.width,h:m.height,data:gsMaskBuf};}r.close&&r.close();}catch(e){console.warn('segment',e);}return out;}
 function gsFit(w,h,max){const s=Math.min(1,max/Math.max(w,h));return[Math.round(w*s/2)*2,Math.round(h*s/2)*2];}
 async function gsOpts(showId,view){const g=gsGet();const rem=(settings.gsShowBg||{})[showId];const bgSrc=await bgSource(rem||g.bg);return Object.assign({},g,{bgSrc,view:view||0});}
@@ -1605,7 +1610,7 @@ async function gsLiveApply(camOn){const want=camOn&&gsLiveMode()!=='off';documen
   if(!gsl.canvas){gsl.canvas=document.createElement('canvas');gsl.canvas.id='cam-gs';gsl.keyer=makeKeyer(gsl.canvas);if(!gsl.keyer){toast('Live green screen needs WebGL');return;}}
   const full=document.body.classList.contains('cam-full');const host=full?$('perf'):$('cam-pip');if(gsl.canvas.parentNode!==host){if(full)$('perf').insertBefore(gsl.canvas,$('cam-backdrop'));else host.appendChild(gsl.canvas);}
   gsl.canvas.classList.toggle('cam-mirror',$('cam-video').classList.contains('cam-mirror'));
-  gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=await gsSegLoad(gsGet().aiQ);}catch(e){toast('AI model not loaded; check the internet');}}
+  gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=null;gsl.seg=await gsSegLoad(gsGet().aiQ);}catch(e){toast('AI model not loaded; check the internet');}}
   if(gsl.on)return;gsl.on=true;const v=$('cam-video');const step=()=>{if(!gsl.on)return;if(v.readyState>=2&&v.videoWidth){const[w,h]=gsFit(v.videoWidth,v.videoHeight,gsLiveMode()==='record'&&gsl.opts.mode!=='ai'?1280:960);const mk=gsl.opts.mode==='ai'&&gsl.seg?gsMaskT(gsl.seg,v,gsl.th||(gsl.th={last:0,gap:66})):null;gsl.keyer.render(v,w,h,gsl.opts,mk);}gsl.raf=requestAnimationFrame(step);};gsl.raf=requestAnimationFrame(step);}
 
 // ================= NEW SHOW =================
@@ -2167,8 +2172,8 @@ $('tr-slow').onclick=e=>{e.stopPropagation();trSpeed(-5);};$('tr-fast').onclick=
 async function bsRender(){const g=gsGet();const live=settings.gsLive||'off';document.querySelectorAll('#bs-live button').forEach(b=>b.classList.toggle('on',b.dataset.v===live));
   $('bs-livenote').textContent=live==='off'?'Off: no background. Pick one below to turn on Preview.':live==='preview'?'Preview: you see the background, but the take is saved with your real surroundings (change it later in Studio).':'Record with background: the background is built into the take.';
   document.querySelectorAll('#bs-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.mode));$('bs-pick').style.display=g.mode==='ai'?'none':'';
-  $('bs-ai').style.display=g.mode==='ai'?'':'none';$('bs-keep').value=g.aiKeep;$('bs-soft').value=g.aiSoft;$('bs-grow').value=Math.max(0,-g.shrink);
-  $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear. Quality (Fast / Best) is in 🎬 Studio → Key.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
+  $('bs-ai').style.display=g.mode==='ai'?'':'none';$('bs-keep').value=g.aiKeep;document.querySelectorAll('#bs-q button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.aiQ));$('bs-soft').value=g.aiSoft;$('bs-grow').value=Math.max(0,-g.shrink);
+  $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
   const cur=((settings.gsShowBg||{})[show&&show.id])||g.bg;const cust=await bgAll();
   $('bs-tiles').innerHTML=GS_BUILTIN.map(b=>`<button data-id="${b[0]}" class="${b[0]===cur?'on':''}" style="background:${b[2].length>1?`linear-gradient(180deg,${b[2].join(',')})`:b[2][0]}">${esc(b[1])}</button>`).join('')
     +cust.map(o=>`<button data-id="${o.id}" class="${o.id===cur?'on':''}" style="background:#333">${(o.type||'').startsWith('video')?'🎞 ':''}${esc(o.name)}</button>`).join('')+'<button class="bs-add" id="bs-add">+ Add</button>';
@@ -2183,6 +2188,7 @@ document.querySelectorAll('#bs-live button').forEach(b=>b.onclick=async()=>{if(c
 document.querySelectorAll('#bs-mode button').forEach(b=>b.onclick=async()=>{gsSave({mode:b.dataset.v});if(b.dataset.v==='ai')toast('Loading AI cutout… (first time needs internet)');await camApply();bsRender();});
 $('bs-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const id='u-'+uid();if(!(await bgPut({id,name:f.name.replace(/\.[^.]+$/,'').slice(0,14),type:f.type,blob:f}))){toast('Could not store that file');return;}bsPickBg(id);});
 ['bs-keep','bs-soft','bs-grow'].forEach(id=>{const r=$(id);const val=()=>r.dataset.k==='grow'?{shrink:-(+r.value)}:{[r.dataset.k]:+r.value};r.oninput=()=>{if(gsl.opts)Object.assign(gsl.opts,val());};r.onchange=()=>gsSave(val());r.addEventListener('pointerdown',e=>e.stopPropagation());});
+document.querySelectorAll('#bs-q button').forEach(b=>b.onclick=async e=>{e.stopPropagation();gsSave({aiQ:b.dataset.v});gsMaskPrev=null;if(b.dataset.v==='best')toast('Loading Best quality…');bsRender();await camApply();});
 let bsPicking=false;$('bs-pick').onclick=e=>{e.stopPropagation();if(camSet().mode==='off'){toast('Turn the camera on first (📷)');return;}bsPicking=true;$('bs-pick').classList.add('on');toast('Now tap the green screen behind you');};
 $('perf').addEventListener('pointerdown',e=>{if(!bsPicking||e.target.closest('#bg-sheet,.thumb'))return;e.preventDefault();e.stopPropagation();const v=$('cam-video');if(!v.videoWidth)return;
   const host=document.body.classList.contains('cam-corner')?$('cam-pip'):$('perf');const r=host.getBoundingClientRect();let x=e.clientX-r.left,y=e.clientY-r.top;if(v.classList.contains('cam-mirror'))x=r.width-x;
@@ -2692,7 +2698,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.58');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.59');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
