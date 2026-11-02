@@ -177,7 +177,7 @@ body.recording #t-pauserec{display:inline-block!important}#t-pauserec.on{backgro
 #bg-sheet.open,#take-done.open{display:block}#bg-sheet .seg{max-width:none;flex-wrap:nowrap}
 .bs-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}.bs-tiles button{height:46px;border-radius:7px;border:2px solid transparent;color:#fff;font-size:10px;font-weight:700;text-shadow:0 1px 3px #000;display:flex;align-items:flex-end;justify-content:center;padding:2px;background-size:cover!important;background-position:center!important}
 .bs-tiles button.on{outline:3px solid var(--yellow)}.bs-tiles .bs-add{background:transparent;border:2px dashed #666;align-items:center;color:var(--upcoming);text-shadow:none}
-.bs-note{font-size:11px;color:var(--upcoming);margin:4px 0}#bs-pick.on{background:var(--yellow);color:#000}
+.bs-note{font-size:11px;color:var(--upcoming);margin:4px 0}#bs-ai input{flex:1;accent-color:var(--yellow)}#bs-pick.on{background:var(--yellow);color:#000}
 .td-y{background:var(--yellow)!important;color:#000!important}.td-r{background:#e53935!important;color:#fff!important}
 body.gs-live.cam-full #cam-backdrop{display:none!important}body.gs-live.cam-full #perf .tline.blank{background:none!important}body.gs-live.cam-full #perf .tline{background:rgba(0,0,0,var(--cam-a,.55));border-radius:8px;padding:2px 8px;margin-left:-8px;margin-right:-8px}
 #rec-count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:640;font-size:28vmin;font-weight:900;color:#fff;text-shadow:0 4px 20px #000;pointer-events:none}
@@ -524,7 +524,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.56</div>
+<div id="ver-label" title="Tap to copy version">v3.57</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -730,7 +730,7 @@ KING (V.O.): Hear my command!
     <p><b>📷 Camera</b> (paused tools row) shows the camera behind the script (<i>Full screen</i>, with a <i>Script backdrop</i> slider from see‑through to solid) or in a small <i>Corner</i> window you can drag to any corner. Front/Rear, Flip and Mirror are in the same panel. With the camera on, <b>● Rec</b> appears on the control bar: it records the camera plus the show audio (and your mic if chosen) and saves <code>PRACTICE - show - date.webm</code> to Downloads when you tap ■ Stop rec. The script itself is not in the video. Camera mode needs the web address (mykegeter.github.io/stage-prompter), not a copy opened from Downloads.</p>
     <p><b>Text‑only shows</b> work like a news teleprompter: tap <b>📷</b> on the control bar, choose Full screen, and the words scroll over the camera with the reading line near the top, close to the lens. Pick the mic under <i>Mic for recording</i> (phone mic or a connected Bluetooth mic; tap ↻ after connecting one). <b>● Rec</b> counts 3‑2‑1, then starts recording and scrolling. On the open Fold the words move to the right half, under the lens (Camera panel → <i>Words under camera</i>).</p>
     <p><b>Text-script tools</b> (paused bar): ⏮ Top, A−/A+, 🐢 Speed 🐇 and <b>🟩 Background</b> (Off / Preview / Record with background, pick a background, Green screen or AI cutout, 💧 Tap the green). During 3‑2‑1 tap <b>✕ Cancel</b>. While recording: speed, <b>❚❚ Pause rec</b> and ■ Stop rec; tap the words to pause or resume scrolling. After you stop: ▶ Watch, ✓ Keep or ↺ Delete &amp; retry.</p>
-    <p><b>🎬 Studio</b> (on each take): replace a green screen, or use <i>AI cutout — for people only</i>. Key tab: 💧 Tap the green, then Similarity / Smoothness / Green spill; Matte view shows white = kept, black = replaced; save presets. Background tab: colours, gradients or your own photo/video, blur and light wrap. Edges: shrink/grow outline, brightness, contrast. Crop: drag a box to keep. <b>Make video</b> saves a new “✨ Studio version” take (MP4 by default) and keeps the original. The Camera panel's <i>🟩 Green screen</i> setting uses the same settings live: <i>Preview</i> shows the background but records the plain camera; <i>Record with background</i> builds it into the take.</p>
+    <p><b>🎬 Studio</b> (on each take): replace a green screen, or use <i>AI cutout — for people only</i> (Quality Fast/Best, <i>Keep more of me</i>, <i>Edge smoothing</i>, <i>Grow outline</i>; edges are steadied over a few frames automatically). Key tab: 💧 Tap the green, then Similarity / Smoothness / Green spill; Matte view shows white = kept, black = replaced; save presets. Background tab: colours, gradients or your own photo/video, blur and light wrap. Edges: shrink/grow outline, brightness, contrast. Crop: drag a box to keep. <b>Make video</b> saves a new “✨ Studio version” take (MP4 by default) and keeps the original. The Camera panel's <i>🟩 Green screen</i> setting uses the same settings live: <i>Preview</i> shows the background but records the plain camera; <i>Record with background</i> builds it into the take.</p>
     <p><b>Home page:</b> shows are grouped into 🎵 Puppet shows and 📝 Text scripts (tap a header to fold it). Tap any show to open its page: play your practice <b>takes</b>, ⤓ Save one to Downloads, ✕ delete, or + Add video. Every ● Rec take is kept with its show in this app on this device — clearing Edge's site data would erase takes you haven't saved.</p>
     <p><b>⛶</b> on the control bar toggles fullscreen at any time. <b>⟲ Sync</b> on the control bar re-seats the display clock on the audio if the phone ever hiccups. With <i>Auto-resync</i> on (Settings → Timing) the show listens to the speaker and applies that correction by itself; stamps are never touched, and a corner note can show each correction.</p>
     <p><b>Show cues.</b> Warnings for yourself, separate from the script timings: an upcoming <b>character change</b> (made automatically from the script) or <b>your own note</b> ("wiggle Samuel", "fog on"). Add one in Word Lab with <b>C</b> at the clock, with <i>+ Cue before this line</i>, or in the script as <code>[CUE: get KING on right hand]</code> (<code>[CUE 5s: …]</code> sets its own warn‑ahead) on the line before it applies. The <b>Cues</b> tab (and ⋯ → Cues in the show) slides up the full list: tick/untick, edit the note, set warn‑ahead and style per cue. On the show screen, <b>while paused</b>, <b>press and hold a character pill</b> to add a cue before that line or manage the cues on it, and <b>hold a ROD or ♪ note</b> to turn it into a cue (a ♪ cue fires when the music starts, at the end of the line before it; a ROD cue at its line's start); text and blank space do nothing. While a cue is showing, <b>press and hold</b> the banner, card or the glow's label to hide that cue, stop warning for that character, warn earlier/later, edit it, change its style, or dismiss it for now. Style is layered: a cue's own style wins, then the show's style (top of the Cues sheet), then the default in Settings → Show cues; Settings shows a note when the open show overrides it. <i>Banner</i> (top or bottom strip with countdown), <i>Edge glow</i> (frame pulses in the character's colour, small label in a corner of your choice), <i>Inline</i> (a coloured rule in the script above the line it belongs to; a cue with only a time and no line shows as a card instead), <i>Card</i> (small card in a corner of your choice).</p>
@@ -794,6 +794,9 @@ KING (V.O.): Hear my command!
     <div class="bs-tiles" id="bs-tiles"></div>
     <div class="cp-row"><div class="seg" id="bs-mode"><button data-v="green">Green screen</button><button data-v="ai">AI cutout</button></div><button class="tbtn" id="bs-pick">💧 Tap the green</button></div>
     <div class="bs-note" id="bs-modenote"></div>
+    <div id="bs-ai"><div class="cp-row"><span class="cp-lbl">Keep more of me</span><input type="range" id="bs-keep" min="0" max="1" step="0.05" data-k="aiKeep"></div>
+      <div class="cp-row"><span class="cp-lbl">Edge smoothing</span><input type="range" id="bs-soft" min="0" max="1" step="0.05" data-k="aiSoft"></div>
+      <div class="cp-row"><span class="cp-lbl">Grow outline</span><input type="range" id="bs-grow" min="0" max="1" step="0.05" data-k="grow"></div></div>
     <div class="bs-note">Fine-tune (sliders, edges, crop, presets) in 🎬 Studio on any take.</div>
     <input type="file" id="bs-input" accept="image/*,video/*" style="display:none">
   </div>
@@ -1406,7 +1409,7 @@ $('sp-add-input').addEventListener('change',async e=>{const f=e.target.files[0];
   const ok=await putTake({id:uid(),showId:spId,blob:f,at:f.lastModified||Date.now(),dur,size:f.size,name:f.name,mime:f.type,added:true});toast(ok?'Video added':'Could not store the video (phone storage full?)');spCur=null;spRefresh();});
 
 // ================= 🎬 STUDIO: green screen + AI cutout =================
-const GS_DEF={mode:'green',key:[0.0,0.69,0.25],sim:0.25,smooth:0.08,spill:0.5,shrink:0,bright:0,contrast:0,blur:0,wrap:0.25,crop:null,bg:'g-sunset'};
+const GS_DEF={mode:'green',key:[0.0,0.69,0.25],sim:0.25,smooth:0.08,spill:0.5,shrink:0,bright:0,contrast:0,blur:0,wrap:0.25,crop:null,bg:'g-sunset',aiQ:'best',aiKeep:0.35,aiSoft:0.4};
 function gsGet(){return Object.assign({},GS_DEF,settings.gs||{});}
 function gsSave(p){settings.gs=Object.assign(gsGet(),p);saveSettings();}
 const GS_BUILTIN=[['g-sunset','Sunset',['#f6c86b','#e08a3c','#7a3b1d']],['g-sky','Sky',['#bfe6ff','#6fb3f2','#2f6fc8']],['g-purple','Night',['#5b2a86','#2c1450','#120822']],['g-stage','Stage',['#7a1020','#4a0812','#1a0306']],['g-meadow','Meadow',['#cfeeb0','#7fc35a','#3f7d2a']],
@@ -1432,14 +1435,19 @@ function bgPaint(src,ctx,w,h,blur){ctx.save();ctx.filter=blur>0?`blur(${Math.rou
 
 // --- WebGL keyer (one per canvas) ---
 const GS_VS='attribute vec2 p;varying vec2 uv;void main(){uv=vec2(p.x*0.5+0.5,0.5-p.y*0.5);gl_Position=vec4(p,0.,1.);}';
-const GS_FS=`precision mediump float;varying vec2 uv;uniform sampler2D fg,bg,mk;uniform vec3 key;uniform float sim,smooth,spill,shrink,bright,contrast,wrap,useAi,view;uniform vec4 crop;uniform vec2 px;
+const GS_FS=`precision mediump float;varying vec2 uv;uniform sampler2D fg,bg,mk;uniform vec3 key;uniform float sim,smooth,spill,shrink,bright,contrast,wrap,useAi,view;uniform vec4 crop;uniform vec2 px;uniform float aiKeep,aiSoft;
 vec2 cbcr(vec3 c){return vec2(dot(c,vec3(-0.1687,-0.3313,0.5))+0.5,dot(c,vec3(0.5,-0.4187,-0.0813))+0.5);}
+float aiT(float m){float t=0.5-aiKeep*0.42;float s=0.03+aiSoft*0.12;return smoothstep(t-s,t+s,m);}
+float aiBil(vec2 q){vec3 c0=texture2D(fg,q).rgb;float r=aiSoft*0.012+0.002;float sm=texture2D(mk,q).r*1.5,sw=1.5;
+  for(int i=0;i<4;i++){vec2 o=i==0?vec2(r,0.):i==1?vec2(-r,0.):i==2?vec2(0.,r):vec2(0.,-r);o*=vec2(px.y/px.x,1.)*0.6+vec2(0.4);vec3 c=texture2D(fg,q+o).rgb-c0;float w=exp(-dot(c,c)*18.);sm+=texture2D(mk,q+o).r*w;sw+=w;}return sm/sw;}
+float amc(vec2 q){if(q.x<crop.x||q.y<crop.y||q.x>crop.z||q.y>crop.w)return 0.;return useAi>0.5?aiT(aiBil(q)):-1.;}
 float am(vec2 q){if(q.x<crop.x||q.y<crop.y||q.x>crop.z||q.y>crop.w)return 0.;
-  if(useAi>0.5){float m=texture2D(mk,q).r;float s=max(smooth,0.02);return smoothstep(0.5-s*2.,0.5+s*2.,m);}
+  if(useAi>0.5)return aiT(texture2D(mk,q).r);
   float d=distance(cbcr(texture2D(fg,q).rgb),cbcr(key))-sim;return pow(clamp(d/max(smooth,0.002),0.,1.),1.5);}
 void main(){vec4 f=texture2D(fg,uv);if(view>1.5){gl_FragColor=vec4(f.rgb,1.);return;}
-  float a=am(uv);vec2 o=px*(1.5+abs(shrink)*4.);
-  if(abs(shrink)>0.01){float n=min(min(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),min(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));float x=max(max(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),max(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));a=shrink>0.?mix(a,n,clamp(shrink,0.,1.)):mix(a,x,clamp(-shrink,0.,1.));}
+  float a=useAi>0.5?amc(uv):am(uv);vec2 o=px*(1.5+abs(shrink)*4.);
+  if(shrink>0.01){float n=min(min(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),min(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));a=mix(a,n,clamp(shrink,0.,1.));}
+  else if(shrink<-0.01){float x=max(max(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),max(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));a=mix(a,x,clamp(-shrink,0.,1.));}
   if(view>0.5){gl_FragColor=vec4(vec3(a),1.);return;}
   vec3 c=f.rgb;
   if(useAi<0.5){float d=distance(cbcr(c),cbcr(key))-sim;float sv=pow(clamp(d/(0.01+spill*0.15),0.,1.),1.5);float de=dot(c,vec3(0.2126,0.7152,0.0722));c=mix(vec3(de),c,sv);c.g=min(c.g,max(c.r,c.b)+ (1.-spill)*0.25+0.02);}
@@ -1463,13 +1471,15 @@ function makeKeyer(canvas){const gl=canvas.getContext('webgl',{preserveDrawingBu
       if(bs&&(bs.kind==='video'||k!==bgKey)){if(bgc.width!==w||bgc.height!==h){bgc.width=w;bgc.height=h;}bgPaint(bs,bctx,w,h,o.blur);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,T[1]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,bgc);bgKey=k;}
       if(o.mode==='ai'&&mask){gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,T[2]);gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.LUMINANCE,mask.w,mask.h,0,gl.LUMINANCE,gl.UNSIGNED_BYTE,mask.data);}
       const c=o.crop||[0,0,1,1];gl.uniform3fv(U('key'),o.key);gl.uniform1f(U('sim'),o.sim);gl.uniform1f(U('smooth'),o.smooth);gl.uniform1f(U('spill'),o.spill);gl.uniform1f(U('shrink'),o.shrink);gl.uniform1f(U('bright'),o.bright);gl.uniform1f(U('contrast'),o.contrast);gl.uniform1f(U('wrap'),o.wrap);
-      gl.uniform1f(U('useAi'),o.mode==='ai'?1:0);gl.uniform1f(U('view'),o.view||0);gl.uniform4f(U('crop'),c[0],c[1],c[2],c[3]);gl.uniform2f(U('px'),1/w,1/h);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}};}
+      gl.uniform1f(U('useAi'),o.mode==='ai'?1:0);gl.uniform1f(U('view'),o.view||0);gl.uniform4f(U('crop'),c[0],c[1],c[2],c[3]);gl.uniform2f(U('px'),1/w,1/h);gl.uniform1f(U('aiKeep'),o.aiKeep!=null?o.aiKeep:0.35);gl.uniform1f(U('aiSoft'),o.aiSoft!=null?o.aiSoft:0.4);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}};}
 // --- AI cutout (people only), MediaPipe selfie segmenter, loaded on first use ---
-let gsSegP=null,gsSegTs=0,gsMaskBuf=null;
-function gsSegLoad(){if(gsSegP)return gsSegP;gsSegP=(async()=>{const base='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';const v=await import(base+'/vision_bundle.mjs');const fs=await v.FilesetResolver.forVisionTasks(base+'/wasm');
-  return v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',delegate:'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});})();
-  gsSegP.catch(()=>{gsSegP=null;});return gsSegP;}
-function gsSegment(seg,src){gsSegTs+=33;let out=null;try{const r=seg.segmentForVideo(src,gsSegTs);const ms=r.confidenceMasks||[];const m=ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length)gsMaskBuf=new Uint8Array(f.length);for(let i=0;i<f.length;i++)gsMaskBuf[i]=f[i]*255;out={w:m.width,h:m.height,data:gsMaskBuf};}r.close&&r.close();}catch(e){console.warn('segment',e);}return out;}
+let gsSegPs={},gsSegTs=0,gsMaskBuf=null,gsMaskPrev=null;
+function gsSegLoad(q){q=q||gsGet().aiQ||'best';if(gsSegPs[q])return gsSegPs[q];const model=q==='best'?'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite':'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite';
+  const p=(async()=>{const base='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';const v=await import(base+'/vision_bundle.mjs');const fs=await v.FilesetResolver.forVisionTasks(base+'/wasm');
+    const seg=await v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:model,delegate:'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});seg._q=q;return seg;})();
+  gsSegPs[q]=p;p.catch(()=>{delete gsSegPs[q];});return p;}
+function gsSegment(seg,src){gsSegTs+=33;let out=null;try{const r=seg.segmentForVideo(src,gsSegTs);const ms=r.confidenceMasks||[];const inv=ms.length>2;const m=inv?ms[0]:ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length){gsMaskBuf=new Uint8Array(f.length);gsMaskPrev=null;}if(!gsMaskPrev)gsMaskPrev=new Float32Array(f.length).fill(-1);
+      for(let i=0;i<f.length;i++){let v=inv?1-f[i]:f[i];const pv=gsMaskPrev[i];if(pv>=0)v=pv*0.45+v*0.55;gsMaskPrev[i]=v;gsMaskBuf[i]=v*255;}out={w:m.width,h:m.height,data:gsMaskBuf};}r.close&&r.close();}catch(e){console.warn('segment',e);}return out;}
 function gsFit(w,h,max){const s=Math.min(1,max/Math.max(w,h));return[Math.round(w*s/2)*2,Math.round(h*s/2)*2];}
 async function gsOpts(showId,view){const g=gsGet();const rem=(settings.gsShowBg||{})[showId];const bgSrc=await bgSource(rem||g.bg);return Object.assign({},g,{bgSrc,view:view||0});}
 
@@ -1480,7 +1490,7 @@ async function openStudio(takeId){const t=spTakes.find(x=>x.id===takeId);if(!t)r
   if(!st.keyer){st.keyer=makeKeyer($('st-canvas'));if(!st.keyer){toast('This browser cannot run Studio (no WebGL)');return;}}
   const i=spTakes.length-spTakes.indexOf(t);$('st-title').textContent='🎬 Studio · Take '+i;st.before=false;st.pick=false;
   showScreen('studio');window.scrollTo(0,0);await stRefreshOpts();stRenderTab();stLoop();}
-async function stRefreshOpts(){st.opts=await gsOpts(st.showId,st.view);const g=gsGet();if(g.mode==='ai'&&!st.seg){$('st-status').textContent='Loading the AI cutout model (first time needs internet)…';try{st.seg=await gsSegLoad();$('st-status').textContent='';}catch(e){$('st-status').textContent='Could not load the AI model. Check the internet and try again.';}}}
+async function stRefreshOpts(){st.opts=await gsOpts(st.showId,st.view);const g=gsGet();if(g.mode==='ai'&&(!st.seg||st.seg._q!==g.aiQ)){st.seg=null;$('st-status').textContent='Loading the AI cutout model (first time needs internet)…';try{st.seg=await gsSegLoad(gsGet().aiQ);$('st-status').textContent='';}catch(e){$('st-status').textContent='Could not load the AI model. Check the internet and try again.';}}}
 function stLoop(){cancelAnimationFrame(st.raf);const v=$('st-src');const step=()=>{if(!$('studio').classList.contains('active'))return;
     if(v.readyState>=2&&st.opts){const[w,h]=gsFit(v.videoWidth,v.videoHeight,1280);const o=Object.assign({},st.opts,{view:st.before?2:st.view});const mk=(o.mode==='ai'&&st.seg&&!st.before)?gsSegment(st.seg,v):null;st.keyer.render(v,w,h,o,mk);}
     $('st-play').textContent=v.paused?'▶':'❚❚';if(v.duration&&isFinite(v.duration)){$('st-scrub').max=v.duration;$('st-scrub').value=v.currentTime;}$('st-time').textContent=spFmt(v.currentTime)+' / '+spFmt(isFinite(v.duration)?v.duration:(st.take&&st.take.dur||0));
@@ -1495,11 +1505,16 @@ async function stRenderTab(){const g=gsGet();document.querySelectorAll('#st-tabs
     <div class="st-note" id="st-ai-note" style="${g.mode==='ai'?'':'display:none'}">AI cutout is <b>for people only</b>. Puppets may disappear or flicker. Use the green screen for puppet shows.</div>
     <div id="st-green-only" style="${g.mode==='ai'?'display:none':''}"><div class="st-row"><span class="st-l">Key color</span><span id="st-swatch" style="width:26px;height:26px;border-radius:6px;border:1px solid #555;background:rgb(${g.key.map(x=>Math.round(x*255)).join(',')})"></span><button class="tbtn" id="st-pick">💧 Tap the green</button></div>
     ${stSlider('st-sim','Similarity','sim',0.05,0.8,0.01,pct)}${stSlider('st-spill','Green spill cleanup','spill',0,1,0.05,pct)}</div>
-    ${stSlider('st-smooth','Smoothness','smooth',0.005,0.3,0.005,pct)}
+    <div style="${g.mode==='ai'?'display:none':''}">${stSlider('st-smooth','Smoothness','smooth',0.005,0.3,0.005,pct)}</div>
+    <div style="${g.mode==='ai'?'':'display:none'}"><div class="st-row"><span class="st-l">Quality</span><div class="seg" id="st-aiq"><button data-v="fast">Fast</button><button data-v="best">Best</button></div></div>
+    ${stSlider('st-aikeep','Keep more of me','aiKeep',0,1,0.05,pct)}${stSlider('st-aisoft','Edge smoothing','aiSoft',0,1,0.05,pct)}
+    <div class="st-row"><span class="st-l">Grow outline</span><input type="range" id="st-aigrow" min="0" max="1" step="0.05" value="${Math.max(0,-g.shrink)}"><span class="st-v" id="st-aigrow-v">${Math.round(Math.max(0,-g.shrink)*100)}</span></div></div>
     <div class="st-row"><span class="st-l">View</span><div class="seg" id="st-view"><button data-v="0">Result</button><button data-v="1">Matte (B/W)</button></div></div>
     <div class="st-row"><span class="st-l">Preset</span><select id="st-preset"><option value="">Choose…</option>${pr.map(n=>`<option>${esc(n)}</option>`).join('')}</select><button class="tbtn" id="st-psave">Save as…</button>${pr.length?'<button class="tbtn" id="st-pdel">Delete</button>':''}</div>
     <div class="st-note">Tip: in Matte view, white = kept, black = replaced. Raise Similarity until the screen is solid black, then lower it if you start losing parts of yourself or the puppets.</div>`;
     P.querySelectorAll('#st-mode button').forEach(b=>{b.classList.toggle('on',b.dataset.v===g.mode);b.onclick=async()=>{stSet({mode:b.dataset.v});await stRefreshOpts();stRenderTab();};});
+    P.querySelectorAll('#st-aiq button').forEach(b=>{b.classList.toggle('on',b.dataset.v===g.aiQ);b.onclick=async()=>{stSet({aiQ:b.dataset.v});st.seg=null;await stRefreshOpts();stRenderTab();};});
+    const ag=$('st-aigrow');if(ag){ag.oninput=()=>{st.opts.shrink=-(+ag.value);$('st-aigrow-v').textContent=Math.round(ag.value*100);};ag.onchange=()=>gsSave({shrink:-(+ag.value)});}
     P.querySelectorAll('#st-view button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===st.view);b.onclick=()=>{st.view=+b.dataset.v;stRenderTab();};});
     const pk=$('st-pick');if(pk)pk.onclick=()=>{st.pick=true;st.before=true;toast('Tap the green screen in the picture');$('st-before').classList.add('on');};
     $('st-preset').onchange=e=>{const p=(settings.gsPresets||{})[e.target.value];if(p){stSet(JSON.parse(JSON.stringify(p)));stRefreshOpts().then(stRenderTab);toast('Preset loaded');}};
@@ -1544,7 +1559,7 @@ document.querySelectorAll('#st-format button').forEach(b=>b.onclick=()=>{setting
 function stProgress(p,msg){$('st-prog').classList.add('on');$('st-prog-bar').style.width=Math.round(p*100)+'%';$('st-prog-msg').textContent=msg||('Making video… '+Math.round(p*100)+'%');}
 $('st-cancel').onclick=()=>{st.cancel=true;};
 $('st-make').onclick=async()=>{if(st.busy||!st.take)return;st.busy=true;st.cancel=false;const v=$('st-src');v.pause();
-  const fmt=settings.gsFormat||'mp4';const opts=await gsOpts(st.showId,0);if(opts.mode==='ai'){try{st.seg=await gsSegLoad();}catch(e){toast('AI model not loaded; check the internet');st.busy=false;return;}}
+  const fmt=settings.gsFormat||'mp4';const opts=await gsOpts(st.showId,0);if(opts.mode==='ai'){try{st.seg=await gsSegLoad(gsGet().aiQ);}catch(e){toast('AI model not loaded; check the internet');st.busy=false;return;}}
   let blob=null,how='';stProgress(0,'Getting ready…');
   try{if(fmt==='mp4'&&window.VideoEncoder&&opts.bgSrc.kind!=='video'){blob=await stMakeFast(opts);how='fast';}}catch(e){console.warn('fast export failed, using real-time',e);blob=null;}
   if(!blob&&!st.cancel){try{blob=await stMakeRealtime(opts,fmt);how='realtime';}catch(e){console.warn(e);}}
@@ -1584,7 +1599,7 @@ async function gsLiveApply(camOn){const want=camOn&&gsLiveMode()!=='off';documen
   if(!gsl.canvas){gsl.canvas=document.createElement('canvas');gsl.canvas.id='cam-gs';gsl.keyer=makeKeyer(gsl.canvas);if(!gsl.keyer){toast('Live green screen needs WebGL');return;}}
   const full=document.body.classList.contains('cam-full');const host=full?$('perf'):$('cam-pip');if(gsl.canvas.parentNode!==host){if(full)$('perf').insertBefore(gsl.canvas,$('cam-backdrop'));else host.appendChild(gsl.canvas);}
   gsl.canvas.classList.toggle('cam-mirror',$('cam-video').classList.contains('cam-mirror'));
-  gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=await gsSegLoad();}catch(e){toast('AI model not loaded; check the internet');}}
+  gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=await gsSegLoad(gsGet().aiQ);}catch(e){toast('AI model not loaded; check the internet');}}
   if(gsl.on)return;gsl.on=true;const v=$('cam-video');const step=()=>{if(!gsl.on)return;if(v.readyState>=2&&v.videoWidth){const[w,h]=gsFit(v.videoWidth,v.videoHeight,gsLiveMode()==='record'?1280:960);const mk=gsl.opts.mode==='ai'&&gsl.seg?gsSegment(gsl.seg,v):null;gsl.keyer.render(v,w,h,gsl.opts,mk);}gsl.raf=requestAnimationFrame(step);};gsl.raf=requestAnimationFrame(step);}
 
 // ================= NEW SHOW =================
@@ -2146,7 +2161,8 @@ $('tr-slow').onclick=e=>{e.stopPropagation();trSpeed(-5);};$('tr-fast').onclick=
 async function bsRender(){const g=gsGet();const live=settings.gsLive||'off';document.querySelectorAll('#bs-live button').forEach(b=>b.classList.toggle('on',b.dataset.v===live));
   $('bs-livenote').textContent=live==='off'?'Off: no background. Pick one below to turn on Preview.':live==='preview'?'Preview: you see the background, but the take is saved with your real surroundings (change it later in Studio).':'Record with background: the background is built into the take.';
   document.querySelectorAll('#bs-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.mode));$('bs-pick').style.display=g.mode==='ai'?'none':'';
-  $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
+  $('bs-ai').style.display=g.mode==='ai'?'':'none';$('bs-keep').value=g.aiKeep;$('bs-soft').value=g.aiSoft;$('bs-grow').value=Math.max(0,-g.shrink);
+  $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear. Quality (Fast / Best) is in 🎬 Studio → Key.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
   const cur=((settings.gsShowBg||{})[show&&show.id])||g.bg;const cust=await bgAll();
   $('bs-tiles').innerHTML=GS_BUILTIN.map(b=>`<button data-id="${b[0]}" class="${b[0]===cur?'on':''}" style="background:${b[2].length>1?`linear-gradient(180deg,${b[2].join(',')})`:b[2][0]}">${esc(b[1])}</button>`).join('')
     +cust.map(o=>`<button data-id="${o.id}" class="${o.id===cur?'on':''}" style="background:#333">${(o.type||'').startsWith('video')?'🎞 ':''}${esc(o.name)}</button>`).join('')+'<button class="bs-add" id="bs-add">+ Add</button>';
@@ -2160,6 +2176,7 @@ $('bg-sheet').addEventListener('click',e=>e.stopPropagation());$('take-done').ad
 document.querySelectorAll('#bs-live button').forEach(b=>b.onclick=async()=>{if(cam.rec){toast('Stop recording first');return;}settings.gsLive=b.dataset.v;if(b.dataset.v!=='off'&&camSet().mode==='off')settings.camMode='full';saveSettings();await camApply();bsRender();});
 document.querySelectorAll('#bs-mode button').forEach(b=>b.onclick=async()=>{gsSave({mode:b.dataset.v});if(b.dataset.v==='ai')toast('Loading AI cutout… (first time needs internet)');await camApply();bsRender();});
 $('bs-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const id='u-'+uid();if(!(await bgPut({id,name:f.name.replace(/\.[^.]+$/,'').slice(0,14),type:f.type,blob:f}))){toast('Could not store that file');return;}bsPickBg(id);});
+['bs-keep','bs-soft','bs-grow'].forEach(id=>{const r=$(id);const val=()=>r.dataset.k==='grow'?{shrink:-(+r.value)}:{[r.dataset.k]:+r.value};r.oninput=()=>{if(gsl.opts)Object.assign(gsl.opts,val());};r.onchange=()=>gsSave(val());r.addEventListener('pointerdown',e=>e.stopPropagation());});
 let bsPicking=false;$('bs-pick').onclick=e=>{e.stopPropagation();if(camSet().mode==='off'){toast('Turn the camera on first (📷)');return;}bsPicking=true;$('bs-pick').classList.add('on');toast('Now tap the green screen behind you');};
 $('perf').addEventListener('pointerdown',e=>{if(!bsPicking||e.target.closest('#bg-sheet,.thumb'))return;e.preventDefault();e.stopPropagation();const v=$('cam-video');if(!v.videoWidth)return;
   const host=document.body.classList.contains('cam-corner')?$('cam-pip'):$('perf');const r=host.getBoundingClientRect();let x=e.clientX-r.left,y=e.clientY-r.top;if(v.classList.contains('cam-mirror'))x=r.width-x;
@@ -2669,7 +2686,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.56');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.57');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
