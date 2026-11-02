@@ -169,6 +169,10 @@ body.cam-under #perf .tele.scrollable .cues{left:0;margin-left:50%}
 .take .tk-info{flex:1;min-width:0}.take .tk-sub{color:var(--upcoming);font-size:11px}
 .sp-script{white-space:pre-wrap;color:var(--upcoming);font-size:14px;line-height:1.5;background:var(--console-gray);border-radius:10px;padding:12px;max-height:40vh;overflow:auto}
 #rc-num{display:block}#rc-cancel{pointer-events:auto;font-size:18px;font-weight:800;background:#e53935;color:#fff;border:0;border-radius:10px;padding:10px 22px;margin-top:8px;text-shadow:none}
+#perf.text-tools .thumb{flex-wrap:wrap;justify-content:center;row-gap:8px;column-gap:8px}
+#perf.text-tools .text-row{flex:0 0 100%;order:50;padding-right:0;justify-content:center;flex-wrap:wrap;row-gap:8px}
+#perf.text-tools .sk{white-space:nowrap;min-height:44px}#perf.text-tools .pair{flex-wrap:nowrap}
+#perf.text-tools #tr-spd{min-width:96px}
 .text-row{display:none;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;flex-basis:100%;width:100%;padding-right:56px;box-sizing:border-box}
 #perf.text-tools .text-row{display:flex}body.recording #perf.text-tools .tr-idle{display:none}
 #perf.text-tools #t-resync,#perf.text-tools #p-clock,#perf.text-tools #t-fs{display:none!important}
@@ -524,7 +528,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.57</div>
+<div id="ver-label" title="Tap to copy version">v3.58</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -1478,7 +1482,9 @@ function gsSegLoad(q){q=q||gsGet().aiQ||'best';if(gsSegPs[q])return gsSegPs[q];c
   const p=(async()=>{const base='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';const v=await import(base+'/vision_bundle.mjs');const fs=await v.FilesetResolver.forVisionTasks(base+'/wasm');
     const seg=await v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:model,delegate:'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});seg._q=q;return seg;})();
   gsSegPs[q]=p;p.catch(()=>{delete gsSegPs[q];});return p;}
-function gsSegment(seg,src){gsSegTs+=33;let out=null;try{const r=seg.segmentForVideo(src,gsSegTs);const ms=r.confidenceMasks||[];const inv=ms.length>2;const m=inv?ms[0]:ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length){gsMaskBuf=new Uint8Array(f.length);gsMaskPrev=null;}if(!gsMaskPrev)gsMaskPrev=new Float32Array(f.length).fill(-1);
+const gsSmall=document.createElement('canvas');gsSmall.width=gsSmall.height=256;const gsSmallCtx=gsSmall.getContext('2d',{alpha:false});
+function gsMaskT(seg,src,th){const now=performance.now();if(now-th.last<th.gap)return null;const m=gsSegment(seg,src);const d=performance.now()-now;th.last=performance.now();th.gap=Math.min(300,Math.max(66,d*3));return m;}
+function gsSegment(seg,src){gsSegTs+=33;let out=null;try{gsSmallCtx.drawImage(src,0,0,256,256);const r=seg.segmentForVideo(gsSmall,gsSegTs);const ms=r.confidenceMasks||[];const inv=ms.length>2;const m=inv?ms[0]:ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length){gsMaskBuf=new Uint8Array(f.length);gsMaskPrev=null;}if(!gsMaskPrev)gsMaskPrev=new Float32Array(f.length).fill(-1);
       for(let i=0;i<f.length;i++){let v=inv?1-f[i]:f[i];const pv=gsMaskPrev[i];if(pv>=0)v=pv*0.45+v*0.55;gsMaskPrev[i]=v;gsMaskBuf[i]=v*255;}out={w:m.width,h:m.height,data:gsMaskBuf};}r.close&&r.close();}catch(e){console.warn('segment',e);}return out;}
 function gsFit(w,h,max){const s=Math.min(1,max/Math.max(w,h));return[Math.round(w*s/2)*2,Math.round(h*s/2)*2];}
 async function gsOpts(showId,view){const g=gsGet();const rem=(settings.gsShowBg||{})[showId];const bgSrc=await bgSource(rem||g.bg);return Object.assign({},g,{bgSrc,view:view||0});}
@@ -1492,7 +1498,7 @@ async function openStudio(takeId){const t=spTakes.find(x=>x.id===takeId);if(!t)r
   showScreen('studio');window.scrollTo(0,0);await stRefreshOpts();stRenderTab();stLoop();}
 async function stRefreshOpts(){st.opts=await gsOpts(st.showId,st.view);const g=gsGet();if(g.mode==='ai'&&(!st.seg||st.seg._q!==g.aiQ)){st.seg=null;$('st-status').textContent='Loading the AI cutout model (first time needs internet)…';try{st.seg=await gsSegLoad(gsGet().aiQ);$('st-status').textContent='';}catch(e){$('st-status').textContent='Could not load the AI model. Check the internet and try again.';}}}
 function stLoop(){cancelAnimationFrame(st.raf);const v=$('st-src');const step=()=>{if(!$('studio').classList.contains('active'))return;
-    if(v.readyState>=2&&st.opts){const[w,h]=gsFit(v.videoWidth,v.videoHeight,1280);const o=Object.assign({},st.opts,{view:st.before?2:st.view});const mk=(o.mode==='ai'&&st.seg&&!st.before)?gsSegment(st.seg,v):null;st.keyer.render(v,w,h,o,mk);}
+    if(v.readyState>=2&&st.opts){const[w,h]=gsFit(v.videoWidth,v.videoHeight,1280);const o=Object.assign({},st.opts,{view:st.before?2:st.view});const mk=(o.mode==='ai'&&st.seg&&!st.before)?gsMaskT(st.seg,v,st.th||(st.th={last:0,gap:66})):null;st.keyer.render(v,w,h,o,mk);}
     $('st-play').textContent=v.paused?'▶':'❚❚';if(v.duration&&isFinite(v.duration)){$('st-scrub').max=v.duration;$('st-scrub').value=v.currentTime;}$('st-time').textContent=spFmt(v.currentTime)+' / '+spFmt(isFinite(v.duration)?v.duration:(st.take&&st.take.dur||0));
     stDrawCrop();st.raf=requestAnimationFrame(step);};st.raf=requestAnimationFrame(step);}
 function stDrawCrop(){const box=$('st-cropbox');const c=gsGet().crop;if(st.tab!=='crop'||!c){box.style.display='none';return;}const cv=$('st-canvas').getBoundingClientRect(),wr=$('st-wrap').getBoundingClientRect();
@@ -1586,7 +1592,7 @@ function stMakeRealtime(opts,fmt){return new Promise(async(res,rej)=>{const v=do
   let rec;try{rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:6000000}:{});}catch(e){rej(e);return;}const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
   rec.onstop=()=>res(st.cancel?null:new Blob(chunks,{type:rec.mimeType||mime||'video/webm'}));
   const dur=isFinite(v.duration)?v.duration:(st.take.dur||1);let done=false;
-  const draw=()=>{if(done)return;if(st.cancel){done=true;v.pause();rec.stop();return;}if(v.readyState>=2){const mk=opts.mode==='ai'&&st.seg?gsSegment(st.seg,v):null;K.render(v,W,H,opts,mk);}stProgress(Math.min(1,v.currentTime/dur),'Making video (plays through once)… '+Math.round(Math.min(1,v.currentTime/dur)*100)+'%');
+  const draw=()=>{if(done)return;if(st.cancel){done=true;v.pause();rec.stop();return;}if(v.readyState>=2){const mk=opts.mode==='ai'&&st.seg?gsMaskT(st.seg,v,st.thx||(st.thx={last:0,gap:66})):null;K.render(v,W,H,opts,mk);}stProgress(Math.min(1,v.currentTime/dur),'Making video (plays through once)… '+Math.round(Math.min(1,v.currentTime/dur)*100)+'%');
     if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(draw);else requestAnimationFrame(draw);};
   v.onended=()=>{if(done)return;done=true;setTimeout(()=>rec.stop(),200);};
   rec.start(1000);try{await v.play();}catch(e){rej(e);return;}draw();});}
@@ -1600,7 +1606,7 @@ async function gsLiveApply(camOn){const want=camOn&&gsLiveMode()!=='off';documen
   const full=document.body.classList.contains('cam-full');const host=full?$('perf'):$('cam-pip');if(gsl.canvas.parentNode!==host){if(full)$('perf').insertBefore(gsl.canvas,$('cam-backdrop'));else host.appendChild(gsl.canvas);}
   gsl.canvas.classList.toggle('cam-mirror',$('cam-video').classList.contains('cam-mirror'));
   gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=await gsSegLoad(gsGet().aiQ);}catch(e){toast('AI model not loaded; check the internet');}}
-  if(gsl.on)return;gsl.on=true;const v=$('cam-video');const step=()=>{if(!gsl.on)return;if(v.readyState>=2&&v.videoWidth){const[w,h]=gsFit(v.videoWidth,v.videoHeight,gsLiveMode()==='record'?1280:960);const mk=gsl.opts.mode==='ai'&&gsl.seg?gsSegment(gsl.seg,v):null;gsl.keyer.render(v,w,h,gsl.opts,mk);}gsl.raf=requestAnimationFrame(step);};gsl.raf=requestAnimationFrame(step);}
+  if(gsl.on)return;gsl.on=true;const v=$('cam-video');const step=()=>{if(!gsl.on)return;if(v.readyState>=2&&v.videoWidth){const[w,h]=gsFit(v.videoWidth,v.videoHeight,gsLiveMode()==='record'&&gsl.opts.mode!=='ai'?1280:960);const mk=gsl.opts.mode==='ai'&&gsl.seg?gsMaskT(gsl.seg,v,gsl.th||(gsl.th={last:0,gap:66})):null;gsl.keyer.render(v,w,h,gsl.opts,mk);}gsl.raf=requestAnimationFrame(step);};gsl.raf=requestAnimationFrame(step);}
 
 // ================= NEW SHOW =================
 let nsAudio=null,nsScriptText='';
@@ -2686,7 +2692,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.57');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.58');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
