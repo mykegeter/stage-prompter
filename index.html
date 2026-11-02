@@ -168,8 +168,20 @@ body.cam-under #perf .tele.scrollable .cues{left:0;margin-left:50%}
 .take .tk-play{width:44px;height:34px;border-radius:7px;background:#3a3530;border:0;color:#fff;font-size:14px;cursor:pointer}
 .take .tk-info{flex:1;min-width:0}.take .tk-sub{color:var(--upcoming);font-size:11px}
 .sp-script{white-space:pre-wrap;color:var(--upcoming);font-size:14px;line-height:1.5;background:var(--console-gray);border-radius:10px;padding:12px;max-height:40vh;overflow:auto}
+#rc-num{display:block}#rc-cancel{pointer-events:auto;font-size:18px;font-weight:800;background:#e53935;color:#fff;border:0;border-radius:10px;padding:10px 22px;margin-top:8px;text-shadow:none}
+.text-row{display:none;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;flex-basis:100%;width:100%;padding-right:56px;box-sizing:border-box}
+#perf.text-tools .text-row{display:flex}body.recording #perf.text-tools .tr-idle{display:none}
+#perf.text-tools #t-resync,#perf.text-tools #p-clock,#perf.text-tools #t-fs{display:none!important}
+body.recording #t-pauserec{display:inline-block!important}#t-pauserec.on{background:var(--yellow);color:#000}
+#bg-sheet,#take-done{position:absolute;left:10px;right:10px;bottom:calc(var(--bar-h,0px) + 10px);max-width:560px;margin:0 auto;background:var(--panel,#15171c);border:1px solid #333;border-radius:14px;padding:12px;z-index:630;display:none;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+#bg-sheet.open,#take-done.open{display:block}#bg-sheet .seg{max-width:none;flex-wrap:nowrap}
+.bs-tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:10px 0}.bs-tiles button{height:46px;border-radius:7px;border:2px solid transparent;color:#fff;font-size:10px;font-weight:700;text-shadow:0 1px 3px #000;display:flex;align-items:flex-end;justify-content:center;padding:2px;background-size:cover!important;background-position:center!important}
+.bs-tiles button.on{outline:3px solid var(--yellow)}.bs-tiles .bs-add{background:transparent;border:2px dashed #666;align-items:center;color:var(--upcoming);text-shadow:none}
+.bs-note{font-size:11px;color:var(--upcoming);margin:4px 0}#bs-pick.on{background:var(--yellow);color:#000}
+.td-y{background:var(--yellow)!important;color:#000!important}.td-r{background:#e53935!important;color:#fff!important}
+body.gs-live.cam-full #cam-backdrop{display:none!important}body.gs-live.cam-full #perf .tline.blank{background:none!important}body.gs-live.cam-full #perf .tline{background:rgba(0,0,0,var(--cam-a,.55));border-radius:8px;padding:2px 8px;margin-left:-8px;margin-right:-8px}
 #rec-count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:640;font-size:28vmin;font-weight:900;color:#fff;text-shadow:0 4px 20px #000;pointer-events:none}
-#rec-count.on{display:flex}
+#rec-count.on{display:flex;flex-direction:column}
 body.cam-text #perf{--now-pos:18vh}
 body.cam-text.cam-full #perf .tline{text-shadow:0 2px 6px #000,0 0 2px #000}
 #cam-panel{position:absolute;left:12px;right:12px;bottom:calc(var(--bar-h,0px) + 12px);max-width:560px;margin:0 auto;background:var(--panel,#15171c);border:1px solid #333;border-radius:14px;padding:12px;z-index:620;display:none;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
@@ -512,7 +524,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.55</div>
+<div id="ver-label" title="Tap to copy version">v3.56</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -717,6 +729,7 @@ KING (V.O.): Hear my command!
     <p>The screen is kept awake the whole time the show screen is open (a system wake lock, re‑acquired whenever the phone drops it; a silent hidden video as fallback where the lock isn't allowed). If the screen ever dims anyway, check the phone's battery saver, which overrides both.</p>
     <p><b>📷 Camera</b> (paused tools row) shows the camera behind the script (<i>Full screen</i>, with a <i>Script backdrop</i> slider from see‑through to solid) or in a small <i>Corner</i> window you can drag to any corner. Front/Rear, Flip and Mirror are in the same panel. With the camera on, <b>● Rec</b> appears on the control bar: it records the camera plus the show audio (and your mic if chosen) and saves <code>PRACTICE - show - date.webm</code> to Downloads when you tap ■ Stop rec. The script itself is not in the video. Camera mode needs the web address (mykegeter.github.io/stage-prompter), not a copy opened from Downloads.</p>
     <p><b>Text‑only shows</b> work like a news teleprompter: tap <b>📷</b> on the control bar, choose Full screen, and the words scroll over the camera with the reading line near the top, close to the lens. Pick the mic under <i>Mic for recording</i> (phone mic or a connected Bluetooth mic; tap ↻ after connecting one). <b>● Rec</b> counts 3‑2‑1, then starts recording and scrolling. On the open Fold the words move to the right half, under the lens (Camera panel → <i>Words under camera</i>).</p>
+    <p><b>Text-script tools</b> (paused bar): ⏮ Top, A−/A+, 🐢 Speed 🐇 and <b>🟩 Background</b> (Off / Preview / Record with background, pick a background, Green screen or AI cutout, 💧 Tap the green). During 3‑2‑1 tap <b>✕ Cancel</b>. While recording: speed, <b>❚❚ Pause rec</b> and ■ Stop rec; tap the words to pause or resume scrolling. After you stop: ▶ Watch, ✓ Keep or ↺ Delete &amp; retry.</p>
     <p><b>🎬 Studio</b> (on each take): replace a green screen, or use <i>AI cutout — for people only</i>. Key tab: 💧 Tap the green, then Similarity / Smoothness / Green spill; Matte view shows white = kept, black = replaced; save presets. Background tab: colours, gradients or your own photo/video, blur and light wrap. Edges: shrink/grow outline, brightness, contrast. Crop: drag a box to keep. <b>Make video</b> saves a new “✨ Studio version” take (MP4 by default) and keeps the original. The Camera panel's <i>🟩 Green screen</i> setting uses the same settings live: <i>Preview</i> shows the background but records the plain camera; <i>Record with background</i> builds it into the take.</p>
     <p><b>Home page:</b> shows are grouped into 🎵 Puppet shows and 📝 Text scripts (tap a header to fold it). Tap any show to open its page: play your practice <b>takes</b>, ⤓ Save one to Downloads, ✕ delete, or + Add video. Every ● Rec take is kept with its show in this app on this device — clearing Edge's site data would erase takes you haven't saved.</p>
     <p><b>⛶</b> on the control bar toggles fullscreen at any time. <b>⟲ Sync</b> on the control bar re-seats the display clock on the audio if the phone ever hiccups. With <i>Auto-resync</i> on (Settings → Timing) the show listens to the speaker and applies that correction by itself; stamps are never touched, and a corner note can show each correction.</p>
@@ -773,7 +786,18 @@ KING (V.O.): Hear my command!
   <video id="cam-video" playsinline muted autoplay></video><div id="cam-backdrop"></div>
   <div class="tele" id="tele"><div class="cues" id="cues"></div></div>
   <div id="cam-pip"><video id="cam-pip-video" playsinline muted autoplay></video></div>
-  <div id="rec-count"></div>
+  <div id="rec-count"><span id="rc-num">3</span><button id="rc-cancel">✕ Cancel</button></div>
+  <div id="bg-sheet">
+    <div class="cp-head"><b>🟩 Background</b><button class="tbtn" id="bs-done">Done</button></div>
+    <div class="seg" id="bs-live"><button data-v="off">Off</button><button data-v="preview">Preview</button><button data-v="record">Record with background</button></div>
+    <div class="bs-note" id="bs-livenote"></div>
+    <div class="bs-tiles" id="bs-tiles"></div>
+    <div class="cp-row"><div class="seg" id="bs-mode"><button data-v="green">Green screen</button><button data-v="ai">AI cutout</button></div><button class="tbtn" id="bs-pick">💧 Tap the green</button></div>
+    <div class="bs-note" id="bs-modenote"></div>
+    <div class="bs-note">Fine-tune (sliders, edges, crop, presets) in 🎬 Studio on any take.</div>
+    <input type="file" id="bs-input" accept="image/*,video/*" style="display:none">
+  </div>
+  <div id="take-done"><b id="td-title">Take saved</b><div class="cp-row"><button class="tbtn td-y" id="td-watch">▶ Watch</button><button class="tbtn" id="td-keep">✓ Keep</button><button class="tbtn td-r" id="td-retry">↺ Delete &amp; retry</button></div><div class="bs-note">Retry jumps back to the top and starts the 3‑2‑1 again.</div></div>
   <div id="rec-ind">● REC <span id="rec-time">0:00</span></div>
   <div id="cam-panel">
     <div class="cp-head"><b>📷 Camera</b><button class="tbtn" id="cp-close">Done</button></div>
@@ -795,7 +819,8 @@ KING (V.O.): Hear my command!
       <button class="sk ico" id="b-fs" title="Fullscreen">⛶</button><button class="sk ico" id="b-settings" title="Settings">⚙</button>
       <button class="sk" id="t-back">−2s</button>
       <span style="position:relative;display:inline-flex"><button class="play" id="t-play"><span>▶</span></button><span id="from-lbl"></span></span>
-      <button class="sk" id="t-fwd">+2s</button><button class="sk" id="t-resync" title="Re-seat the clock on the audio">⟲ Sync</button><button class="sk" id="t-fs" title="Fullscreen on/off">⛶</button><button class="sk" id="t-cam" title="Camera" style="display:none">📷</button><button class="sk" id="t-rec" title="Record a practice video" style="display:none">● Rec</button><span class="rclock" id="p-clock" style="display:none;font-size:16px;min-width:0;padding:6px 10px;white-space:nowrap">0:00.0</span>
+      <button class="sk" id="t-fwd">+2s</button><button class="sk" id="t-resync" title="Re-seat the clock on the audio">⟲ Sync</button><button class="sk" id="t-fs" title="Fullscreen on/off">⛶</button><button class="sk" id="t-cam" title="Camera" style="display:none">📷</button><button class="sk" id="t-rec" title="Record a practice video" style="display:none">● Rec</button><button class="sk" id="t-pauserec" style="display:none">❚❚ Pause rec</button><span class="rclock" id="p-clock" style="display:none;font-size:16px;min-width:0;padding:6px 10px;white-space:nowrap">0:00.0</span>
+      <div class="text-row" id="text-row"><button class="sk tr-idle" id="tr-top">⏮ Top</button><span class="pair tr-idle"><button class="sk" id="tr-fminus">A−</button><button class="sk" id="tr-fplus">A+</button></span><span class="pair"><button class="sk" id="tr-slow" title="Slower">🐢</button><button class="sk" id="tr-spd" style="pointer-events:none">Speed 40</button><button class="sk" id="tr-fast" title="Faster">🐇</button></span><button class="sk tr-idle" id="tr-bg">🟩 Background</button></div>
       <div class="paused-row" id="paused-row"><button class="sk" id="p-start" title="Back to the very beginning">⏮ Start</button><button class="sk" id="p-cam" title="Camera view and practice recording">📷 Camera</button><button class="sk" id="p-cues">Cues</button><button class="sk" id="p-wl">Word Lab here</button><span class="pair"><button class="sk" id="p-fminus" title="Smaller text">A−</button><button class="sk" id="p-fplus" title="Larger text">A+</button></span><button class="sk" id="p-lead" title="Tap to cycle the show lead">Lead 0.50</button><button class="sk" id="p-backup" title="Backup">⤓</button></div>
       <div id="stamp-wrap" style="display:none;flex:1;max-width:260px;min-width:120px"><button class="stamp-btn" id="t-stamp" style="width:100%;max-width:none">TAP: START / END</button><div class="key-hint" id="key-hint">Space = tap · Z = undo · P = play · 1/2/3 = grain · ← → = 2s</div></div>
     </div>
@@ -2011,7 +2036,7 @@ function openLineCueMenu(i,noteText,x,y,noteKind){clearSel();const c=show.cues[i
     closeCueMenu();renderCues();});}
 $('tele').addEventListener('touchstart',e=>{swiped=false;tsY=e.touches[0].clientY;},{passive:true});
 $('tele').addEventListener('touchmove',e=>{if(Math.abs(e.touches[0].clientY-tsY)>10)swiped=true;},{passive:true});
-$('tele').addEventListener('click',()=>{if(swiped){swiped=false;return;}if(mode==='rehearse'){stamp();return;}if(mode==='edit')return;toggleBar();});
+$('tele').addEventListener('click',()=>{if(swiped){swiped=false;return;}if(mode==='rehearse'){stamp();return;}if(mode==='edit')return;if(mode==='text'&&cam.rec&&cam.rec.state==='recording'){toggleAutoScroll();$('thumb').classList.remove('hidden');toast(autoScroll?'Scrolling':'Scrolling paused (still recording)');return;}toggleBar();});
 
 // drawer
 $('d-seek').addEventListener('input',e=>{if(audio.duration)audio.currentTime=(e.target.value/1000)*audio.duration;});
@@ -2048,6 +2073,7 @@ async function camApply(){const c=camSet();const onPerf=$('perf').classList.cont
   $('cam-pip').className=c.corner;camBarH();$('t-rec').style.display=want?'':'none';
   if(want){await camStart();}else{if(cam.rec)camRecStop();camStopStream();}
   if(typeof gsLiveApply==='function')gsLiveApply(want&&!!cam.stream);
+  if(typeof trRender==='function')trRender();if(!onPerf){['bg-sheet','take-done'].forEach(i=>{const x=$(i);if(x)x.classList.remove('open');});}
   renderCamPanel();}
 function camBarH(){const t=$('thumb');let h=0;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).visibility!=='hidden'&&+getComputedStyle(t).opacity>0.05)h=Math.max(0,innerHeight-r.top);}document.documentElement.style.setProperty('--bar-h',h+'px');}
 function camUnderOn(){const u=camSet().under;if(u==='on')return true;if(u==='off')return false;const w=innerWidth,h=innerHeight;return w>=600&&w/h>0.7&&w/h<1.3;}
@@ -2085,26 +2111,65 @@ async function camRecStart(){if(cam.counting)return;if(!cam.stream&&!(await camS
   const textMode=mode==='text';let micId=camSet().micId;if(textMode&&!micId)micId='default';
   const tracks=(gsLiveMode()==='record'&&gsl.on&&gsl.canvas)?[...gsl.canvas.captureStream(30).getVideoTracks()]:[...cam.stream.getVideoTracks()];
   const micC=micId&&micId!=='default'?{deviceId:{exact:micId}}:{};
-  if(textMode){try{cam.micStream=await navigator.mediaDevices.getUserMedia({audio:micC.deviceId?micC:true});tracks.push(...cam.micStream.getAudioTracks());}catch(e){toast('Microphone not allowed; recording video only');}}
+  if(textMode){try{cam.micStream=cam.preMicP?await cam.preMicP:null;cam.preMicP=null;if(!cam.micStream)cam.micStream=await navigator.mediaDevices.getUserMedia({audio:micC.deviceId?micC:true});tracks.push(...cam.micStream.getAudioTracks());}catch(e){toast('Microphone not allowed; recording video only');}}
   else{try{if(await smEnsure()){if(!cam.dest){cam.dest=sm.ctx.createMediaStreamDestination();sm.src.connect(cam.dest);}tracks.push(...cam.dest.stream.getAudioTracks());}}catch(e){console.warn('show audio not captured',e);}
     if(micId&&cam.dest){try{cam.micStream=await navigator.mediaDevices.getUserMedia({audio:Object.assign({echoCancellation:false,noiseSuppression:false},micC)});const ms=sm.ctx.createMediaStreamSource(cam.micStream);ms.connect(cam.dest);cam.micNode=ms;}catch(e){toast('Microphone not allowed; recording without it');}}}
   const mime=recMime();try{cam.rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:5000000}:{});}catch(e){toast('Could not start recording');cam.rec=null;return;}
   cam.chunks=[];cam.rec.ondataavailable=e=>{if(e.data&&e.data.size)cam.chunks.push(e.data);};
   cam.rec.onstop=()=>{const type=(cam.rec&&cam.rec.mimeType)||mime||'video/webm';const ext=/mp4/.test(type)?'mp4':'webm';const blob=new Blob(cam.chunks,{type});const d=new Date();const stamp=d.toISOString().slice(0,10)+' '+String(d.getHours()).padStart(2,'0')+'.'+String(d.getMinutes()).padStart(2,'0');
-    const fname='PRACTICE - '+safeName(show&&show.name)+' - '+stamp+'.'+ext;const dur=(Date.now()-cam.recStart)/1000;const sid=show&&show.id;const known=sid&&loadShows().some(x=>x.id===sid);
+    const fname='PRACTICE - '+safeName(show&&show.name)+' - '+stamp+'.'+ext;const dur=recElapsed();const sid=show&&show.id;const known=sid&&loadShows().some(x=>x.id===sid);
     const dl=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);};
     cam.rec=null;cam.chunks=[];
     if(!known){dl();toast('Show not saved yet, so the take went to Downloads');return;}
-    putTake({id:uid(),showId:sid,blob,at:Date.now(),dur,size:blob.size,name:fname,mime:type}).then(ok=>{if(ok)toast('🎬 Take kept with this show ('+Math.max(1,Math.round(blob.size/1048576))+' MB). Exit to see it.');else{dl();toast('Could not keep the take in the app; saved to Downloads');}});};
-  cam.rec.start(1000);cam.recStart=Date.now();document.body.classList.add('recording');$('t-rec').classList.add('on');$('t-rec').textContent='■ Stop rec';
-  cam.recTimer=setInterval(()=>{camBarH();const s=Math.floor((Date.now()-cam.recStart)/1000);$('rec-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},500);
+    const tid=uid();putTake({id:tid,showId:sid,blob,at:Date.now(),dur,size:blob.size,name:fname,mime:type}).then(async ok=>{if(ok){if(mode==='text'&&$('perf').classList.contains('active')){const n=(await getTakes(sid)).length;$('td-title').textContent='Take '+n+' saved · '+spFmt(dur);cam.lastTake=tid;$('take-done').classList.add('open');}else toast('🎬 Take kept with this show ('+Math.max(1,Math.round(blob.size/1048576))+' MB). Exit to see it.');}else{dl();toast('Could not keep the take in the app; saved to Downloads');}});};
+  cam.rec.start(1000);cam.recStart=Date.now();cam.pausedMs=0;cam.pauseAt=0;$('t-pauserec').classList.remove('on');$('t-pauserec').textContent='❚❚ Pause rec';document.body.classList.add('recording');$('t-rec').classList.add('on');$('t-rec').textContent='■ Stop rec';
+  cam.recTimer=setInterval(()=>{camBarH();const s=Math.floor(recElapsed());$('rec-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},500);
   if(textMode){if(!autoScroll)startAutoScroll();}else if(!isPlaying)play();}
-async function camRecCountdown(){if(mode!=='text'){camRecStart();return;}if(autoScroll)stopAutoScroll();cam.counting=true;const el=$('rec-count');el.classList.add('on');
-  for(const n of [3,2,1]){el.textContent=n;await new Promise(r=>setTimeout(r,1000));if(!cam.counting){el.classList.remove('on');return;}}
+async function camRecCountdown(){if(mode!=='text'){camRecStart();return;}if(autoScroll)stopAutoScroll();$('take-done').classList.remove('open');$('bg-sheet').classList.remove('open');cam.counting=true;const el=$('rec-count');el.classList.add('on');
+  let micId=camSet().micId||'default';const micC=micId!=='default'?{deviceId:{exact:micId}}:true;cam.preMicP=navigator.mediaDevices.getUserMedia({audio:micC}).catch(()=>null);
+  for(const n of [3,2,1]){$('rc-num').textContent=n;await new Promise(r=>setTimeout(r,1000));if(!cam.counting){el.classList.remove('on');return;}}
   el.classList.remove('on');cam.counting=false;camRecStart();}
-function camRecStop(){if(cam.counting){cam.counting=false;$('rec-count').classList.remove('on');}if(cam.rec&&cam.rec.state!=='inactive')cam.rec.stop();clearInterval(cam.recTimer);document.body.classList.remove('recording');$('t-rec').classList.remove('on');$('t-rec').textContent='● Rec';$('rec-time').textContent='0:00';
+$('rc-cancel').onclick=e=>{e.stopPropagation();cam.counting=false;$('rec-count').classList.remove('on');if(cam.preMicP){cam.preMicP.then(st=>{if(st)st.getTracks().forEach(t=>t.stop());});cam.preMicP=null;}toast('Recording cancelled');};
+function recElapsed(){if(!cam.recStart)return 0;const now=cam.pauseAt||Date.now();return Math.max(0,(now-cam.recStart-(cam.pausedMs||0))/1000);}
+$('t-pauserec').onclick=e=>{e.stopPropagation();if(!cam.rec)return;if(cam.rec.state==='recording'){cam.rec.pause();cam.pauseAt=Date.now();if(autoScroll)stopAutoScroll();$('t-pauserec').classList.add('on');$('t-pauserec').textContent='▶ Resume rec';$('rec-ind').style.opacity=.5;}
+  else if(cam.rec.state==='paused'){cam.pausedMs+=Date.now()-cam.pauseAt;cam.pauseAt=0;cam.rec.resume();if(mode==='text'&&!autoScroll)startAutoScroll();$('t-pauserec').classList.remove('on');$('t-pauserec').textContent='❚❚ Pause rec';$('rec-ind').style.opacity=1;}};
+function camRecStop(){if(cam.pauseAt){cam.pausedMs+=Date.now()-cam.pauseAt;cam.pauseAt=0;}$('rec-ind').style.opacity=1;if(cam.counting){cam.counting=false;$('rec-count').classList.remove('on');}if(cam.rec&&cam.rec.state!=='inactive')cam.rec.stop();clearInterval(cam.recTimer);document.body.classList.remove('recording');$('t-rec').classList.remove('on');$('t-rec').textContent='● Rec';$('rec-time').textContent='0:00';
   if(cam.micStream){cam.micStream.getTracks().forEach(t=>t.stop());cam.micStream=null;}if(cam.micNode){try{cam.micNode.disconnect();}catch(e){}cam.micNode=null;}}
 $('t-rec').onclick=e=>{e.stopPropagation();if(cam.rec||cam.counting)camRecStop();else camRecCountdown();};
+// ---- text-script tools ----
+function trRender(){const on=mode==='text'&&$('perf').classList.contains('active');$('perf').classList.toggle('text-tools',on);if(!on)return;$('tr-spd').textContent='Speed '+autoSpeed;$('t-back').textContent='↑';$('t-fwd').textContent='↓';}
+$('tr-top').onclick=e=>{e.stopPropagation();if(autoScroll)stopAutoScroll();$('tele').scrollTo({top:0,behavior:'smooth'});};
+$('tr-fminus').onclick=e=>{e.stopPropagation();stepFont(-4);};$('tr-fplus').onclick=e=>{e.stopPropagation();stepFont(4);};
+const trSpeed=d=>{autoSpeed=Math.max(5,Math.min(150,autoSpeed+d));$('d-spd').textContent=autoSpeed;trRender();scheduleHide();};
+$('tr-slow').onclick=e=>{e.stopPropagation();trSpeed(-5);};$('tr-fast').onclick=e=>{e.stopPropagation();trSpeed(5);};
+// background sheet
+async function bsRender(){const g=gsGet();const live=settings.gsLive||'off';document.querySelectorAll('#bs-live button').forEach(b=>b.classList.toggle('on',b.dataset.v===live));
+  $('bs-livenote').textContent=live==='off'?'Off: no background. Pick one below to turn on Preview.':live==='preview'?'Preview: you see the background, but the take is saved with your real surroundings (change it later in Studio).':'Record with background: the background is built into the take.';
+  document.querySelectorAll('#bs-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===g.mode));$('bs-pick').style.display=g.mode==='ai'?'none':'';
+  $('bs-modenote').innerHTML=g.mode==='ai'?'<b>AI cutout is for people only.</b> No green screen needed. Puppets may disappear.':'Green screen: hang a green screen behind you, then tap 💧 and tap the green in the picture.';
+  const cur=((settings.gsShowBg||{})[show&&show.id])||g.bg;const cust=await bgAll();
+  $('bs-tiles').innerHTML=GS_BUILTIN.map(b=>`<button data-id="${b[0]}" class="${b[0]===cur?'on':''}" style="background:${b[2].length>1?`linear-gradient(180deg,${b[2].join(',')})`:b[2][0]}">${esc(b[1])}</button>`).join('')
+    +cust.map(o=>`<button data-id="${o.id}" class="${o.id===cur?'on':''}" style="background:#333">${(o.type||'').startsWith('video')?'🎞 ':''}${esc(o.name)}</button>`).join('')+'<button class="bs-add" id="bs-add">+ Add</button>';
+  cust.forEach(o=>{if((o.type||'').startsWith('image')){const el=$('bs-tiles').querySelector(`[data-id="${o.id}"]`);if(el)el.style.backgroundImage=`url(${URL.createObjectURL(o.blob)})`;}});
+  $('bs-tiles').querySelectorAll('button[data-id]').forEach(b=>b.onclick=e=>{e.stopPropagation();bsPickBg(b.dataset.id);});$('bs-add').onclick=e=>{e.stopPropagation();$('bs-input').click();};}
+async function bsPickBg(id){gsSave({bg:id});const m=settings.gsShowBg||{};if(show&&show.id&&m[show.id]){m[show.id]=id;settings.gsShowBg=m;}
+  if((settings.gsLive||'off')==='off'){settings.gsLive='preview';toast('Background on (Preview)');}if(camSet().mode==='off')settings.camMode='full';saveSettings();await camApply();bsRender();}
+$('tr-bg').onclick=e=>{e.stopPropagation();$('cam-panel').classList.remove('open');$('take-done').classList.remove('open');camBarH();$('bg-sheet').classList.toggle('open');bsRender();};
+$('bs-done').onclick=e=>{e.stopPropagation();bsPicking=false;$('bs-pick').classList.remove('on');$('bg-sheet').classList.remove('open');};
+$('bg-sheet').addEventListener('click',e=>e.stopPropagation());$('take-done').addEventListener('click',e=>e.stopPropagation());
+document.querySelectorAll('#bs-live button').forEach(b=>b.onclick=async()=>{if(cam.rec){toast('Stop recording first');return;}settings.gsLive=b.dataset.v;if(b.dataset.v!=='off'&&camSet().mode==='off')settings.camMode='full';saveSettings();await camApply();bsRender();});
+document.querySelectorAll('#bs-mode button').forEach(b=>b.onclick=async()=>{gsSave({mode:b.dataset.v});if(b.dataset.v==='ai')toast('Loading AI cutout… (first time needs internet)');await camApply();bsRender();});
+$('bs-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const id='u-'+uid();if(!(await bgPut({id,name:f.name.replace(/\.[^.]+$/,'').slice(0,14),type:f.type,blob:f}))){toast('Could not store that file');return;}bsPickBg(id);});
+let bsPicking=false;$('bs-pick').onclick=e=>{e.stopPropagation();if(camSet().mode==='off'){toast('Turn the camera on first (📷)');return;}bsPicking=true;$('bs-pick').classList.add('on');toast('Now tap the green screen behind you');};
+$('perf').addEventListener('pointerdown',e=>{if(!bsPicking||e.target.closest('#bg-sheet,.thumb'))return;e.preventDefault();e.stopPropagation();const v=$('cam-video');if(!v.videoWidth)return;
+  const host=document.body.classList.contains('cam-corner')?$('cam-pip'):$('perf');const r=host.getBoundingClientRect();let x=e.clientX-r.left,y=e.clientY-r.top;if(v.classList.contains('cam-mirror'))x=r.width-x;
+  const sc=Math.max(r.width/v.videoWidth,r.height/v.videoHeight);const vx=(x-(r.width-v.videoWidth*sc)/2)/sc,vy=(y-(r.height-v.videoHeight*sc)/2)/sc;
+  const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;const cx=c.getContext('2d',{willReadFrequently:true});cx.drawImage(v,0,0);const d=cx.getImageData(Math.max(0,Math.round(vx)-3),Math.max(0,Math.round(vy)-3),7,7).data;
+  let R=0,G=0,B=0,n=0;for(let i=0;i<d.length;i+=4){R+=d[i];G+=d[i+1];B+=d[i+2];n++;}gsSave({key:[R/n/255,G/n/255,B/n/255],mode:'green'});bsPicking=false;$('bs-pick').classList.remove('on');toast('Green picked');camApply();bsRender();},true);
+// after-take panel
+$('td-keep').onclick=()=>$('take-done').classList.remove('open');
+$('td-retry').onclick=async()=>{$('take-done').classList.remove('open');if(cam.lastTake){await delTake(cam.lastTake);cam.lastTake=null;}$('tele').scrollTop=0;toast('Take deleted · starting again');setTimeout(camRecCountdown,300);};
+$('td-watch').onclick=async()=>{$('take-done').classList.remove('open');const sid=show&&show.id;stopAutoScroll();if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});spReturn=null;await openShowPage(sid);const v=$('sp-player').querySelector('video');if(v)v.play().catch(()=>{});};
 function renderPausedRow(){const l=$('p-lead');if(l)l.textContent='Lead '+(+settings.lead||0).toFixed(2);}
 function stepFont(d){const v=Math.max(20,Math.min(64,(+$('d-font').value||32)+d));$('d-font').value=v;$('d-font').dispatchEvent(new Event('input'));toast(v+'px');}
 $('p-start').onclick=()=>{pause();try{audio.currentTime=0;}catch(e){}snapClock();cueDismissed.clear();syncCorr=0;setTimeout(()=>{freeScroll(true);$('tele').scrollTop=0;pausedScrollTop=0;setFromLine(null);update();},40);toast('At the start');};
@@ -2379,8 +2444,8 @@ function startTextPerf(){
   $('thumb').classList.remove('hidden');$('drawer').classList.remove('open');
   showScreen('perf');stopLoop();setTimeout(camApply,0);
 }
-$('d-spd-up').onclick=()=>{autoSpeed=Math.min(100,autoSpeed+10);$('d-spd').textContent=autoSpeed;};
-$('d-spd-down').onclick=()=>{autoSpeed=Math.max(10,autoSpeed-10);$('d-spd').textContent=autoSpeed;};
+$('d-spd-up').onclick=()=>{autoSpeed=Math.min(150,autoSpeed+10);$('d-spd').textContent=autoSpeed;trRender();};
+$('d-spd-down').onclick=()=>{autoSpeed=Math.max(5,autoSpeed-10);$('d-spd').textContent=autoSpeed;trRender();};
 function toggleAutoScroll(){if(autoScroll)stopAutoScroll();else startAutoScroll();}
 let asRaf=null;
 function startAutoScroll(){autoScroll=true;scrollAcc=0;lastT=0;setPlayIcon('❚❚');scheduleHide();
@@ -2604,7 +2669,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.55');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.56');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
