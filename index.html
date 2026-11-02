@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0A0A0A">
+<meta name="robots" content="noindex, nofollow">
+<meta name="copyright" content="© 2026 Geter Holdings LLC. All rights reserved.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!-- Stage Prompter · © 2026 Geter Holdings LLC. All rights reserved. No license is granted to copy, modify or redistribute this code. -->
 <title>Stage Prompter</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -113,6 +119,27 @@ textarea.script{width:100%;min-height:180px;background:var(--console-gray);color
 /* ===== performance ===== */
 #ver-label{position:fixed;right:6px;bottom:4px;font-size:10px;color:var(--dim,#666);opacity:.7;z-index:9000;pointer-events:auto;cursor:default;user-select:none}
 body.performing.perf-mode #ver-label{display:none}@media(max-width:600px){#wl-saved{display:none}}#wl-save.flash{animation:svflash .3s 2}
+#cam-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;z-index:0;background:#000}
+#cam-backdrop{position:absolute;inset:0;display:none;z-index:0;background:rgba(10,11,14,var(--cam-a,.55))}
+body.cam-full #cam-video,body.cam-full #cam-backdrop{display:block}
+body.cam-full #perf,body.cam-full #perf .tele{background:transparent!important}
+body.cam-full #perf .cue-text,body.cam-full #perf .cue-char{text-shadow:0 2px 6px #000,0 0 2px #000}
+#perf .tele{z-index:1}
+#cam-pip{position:absolute;width:150px;height:200px;border-radius:12px;overflow:hidden;border:2px solid rgba(255,255,255,.85);box-shadow:0 6px 20px rgba(0,0,0,.7);z-index:56;display:none;touch-action:none;background:#000}
+#cam-pip video{width:100%;height:100%;object-fit:cover}
+body.cam-corner #cam-pip{display:block}
+#cam-pip.bl{left:14px;bottom:calc(var(--bar-h,0px) + 16px)}#cam-pip.br{right:14px;bottom:calc(var(--bar-h,0px) + 16px)}#cam-pip.tl{left:14px;top:max(14px,env(safe-area-inset-top))}#cam-pip.tr{right:14px;top:max(14px,env(safe-area-inset-top))}
+.cam-mirror{transform:scaleX(-1)}
+#rec-ind{position:absolute;left:14px;top:max(12px,env(safe-area-inset-top));z-index:60;background:rgba(0,0,0,.65);color:#ff5252;font-weight:800;font-size:13px;padding:5px 10px;border-radius:9px;display:none}
+body.recording #rec-ind{display:block}
+#t-rec.on{background:#e53935;color:#fff}
+#cam-panel{position:absolute;left:12px;right:12px;bottom:calc(var(--bar-h,0px) + 12px);max-width:560px;margin:0 auto;background:var(--panel,#15171c);border:1px solid #333;border-radius:14px;padding:12px;z-index:620;display:none;font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.6)}
+#cam-panel.open{display:block}
+.cp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.cp-head b{font-size:15px}
+.cp-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}.cp-lbl{flex-basis:100%;color:var(--upcoming);font-size:12px}#cam-panel .seg{max-width:none;flex-wrap:nowrap}#cam-pip{transition:bottom .2s}.cp-end{font-size:11px;color:var(--upcoming)}
+#cp-backdrop{flex:1;min-width:120px;accent-color:var(--yellow)}
+#cp-mirror.on{background:var(--yellow);color:#000}
+.cp-note{font-size:11px;color:var(--upcoming);margin-top:6px}
 .paused-row{display:none;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;flex-basis:100%;width:100%;padding-right:56px;box-sizing:border-box}
 #perf.paused-tools .paused-row{display:flex}
 .paused-row .sk{font-size:12px;padding:8px 10px;white-space:nowrap}
@@ -446,7 +473,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.50</div>
+<div id="ver-label" title="Tap to copy version">v3.51</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -615,6 +642,7 @@ KING (V.O.): Hear my command!
     <p><b>Paused = rehearsal mode.</b> While the show is paused you can scroll the script, and the line sitting at the now position (the centre unless you moved the now bar) gets a yellow edge with “▶ from L14” over the Play button: pressing Play starts the audio 1 s before that line, with its cues firing as in the show. Pause and play again without scrolling, and it simply resumes.</p>
     <p>While paused, the bar also shows a tools row: <b>⏮ Start</b> (back to 0:00, top of the script), <b>Cues</b>, <b>Word Lab here</b> (opens Word Lab on the line at the now position; Done returns to the show), <b>A− / A+</b> text size, the <b>Lead</b> chip (tap to cycle 0 / 0.25 / 0.50 / 0.75), and <b>⤓</b> backup. It disappears as soon as you press Play.</p>
     <p>The screen is kept awake the whole time the show screen is open (a system wake lock, re‑acquired whenever the phone drops it; a silent hidden video as fallback where the lock isn't allowed). If the screen ever dims anyway, check the phone's battery saver, which overrides both.</p>
+    <p><b>📷 Camera</b> (paused tools row) shows the camera behind the script (<i>Full screen</i>, with a <i>Script backdrop</i> slider from see‑through to solid) or in a small <i>Corner</i> window you can drag to any corner. Front/Rear, Flip and Mirror are in the same panel. With the camera on, <b>● Rec</b> appears on the control bar: it records the camera plus the show audio (and your mic if chosen) and saves <code>PRACTICE - show - date.webm</code> to Downloads when you tap ■ Stop rec. The script itself is not in the video. Camera mode needs the web address (mykegeter.github.io/stage-prompter), not a copy opened from Downloads.</p>
     <p><b>⛶</b> on the control bar toggles fullscreen at any time. <b>⟲ Sync</b> on the control bar re-seats the display clock on the audio if the phone ever hiccups. With <i>Auto-resync</i> on (Settings → Timing) the show listens to the speaker and applies that correction by itself; stamps are never touched, and a corner note can show each correction.</p>
     <p><b>Show cues.</b> Warnings for yourself, separate from the script timings: an upcoming <b>character change</b> (made automatically from the script) or <b>your own note</b> ("wiggle Samuel", "fog on"). Add one in Word Lab with <b>C</b> at the clock, with <i>+ Cue before this line</i>, or in the script as <code>[CUE: get KING on right hand]</code> (<code>[CUE 5s: …]</code> sets its own warn‑ahead) on the line before it applies. The <b>Cues</b> tab (and ⋯ → Cues in the show) slides up the full list: tick/untick, edit the note, set warn‑ahead and style per cue. On the show screen, <b>while paused</b>, <b>press and hold a character pill</b> to add a cue before that line or manage the cues on it, and <b>hold a ROD or ♪ note</b> to turn it into a cue (a ♪ cue fires when the music starts, at the end of the line before it; a ROD cue at its line's start); text and blank space do nothing. While a cue is showing, <b>press and hold</b> the banner, card or the glow's label to hide that cue, stop warning for that character, warn earlier/later, edit it, change its style, or dismiss it for now. Style is layered: a cue's own style wins, then the show's style (top of the Cues sheet), then the default in Settings → Show cues; Settings shows a note when the open show overrides it. <i>Banner</i> (top or bottom strip with countdown), <i>Edge glow</i> (frame pulses in the character's colour, small label in a corner of your choice), <i>Inline</i> (a coloured rule in the script above the line it belongs to; a cue with only a time and no line shows as a card instead), <i>Card</i> (small card in a corner of your choice).</p>
     <p>Before the first show on a new device: open Word Lab once so the audio check runs, confirm <b>Show lead</b> is 0, and play a line with <b>▶ Preview as show</b>.</p>
@@ -627,6 +655,7 @@ KING (V.O.): Hear my command!
   </div></details>
   <details class="sec gsec" id="g7"><summary>7 · Settings</summary><div class="gbody">
     <p><b>Show display:</b> skin, font size, now bar position, word fill style, cursor, controls layout. <b>Notes:</b> show or hide music and rod notes. <b>Timing:</b> lead time, measured lag. <b>Controls:</b> what a tap does in rehearsal, clicker keys. <b>Text‑only mode:</b> scroll speed for scripts without audio. <b>Backups:</b> folder and Backup all. <b>Advanced:</b> debug readout.</p>
+    <p>Stage Prompter © 2026 Geter Holdings LLC. All rights reserved.</p>
     <p>The small <b>v‑number</b> in the bottom‑right corner is the app version; tap it to copy it when reporting a problem.</p>
   </div></details>
 </div>
@@ -665,7 +694,18 @@ KING (V.O.): Hear my command!
     <span class="now-label">NOW</span>
     <div class="nextup" id="nextup" style="display:none">Next: <b id="nextup-name"></b></div>
   </div>
+  <video id="cam-video" playsinline muted autoplay></video><div id="cam-backdrop"></div>
   <div class="tele" id="tele"><div class="cues" id="cues"></div></div>
+  <div id="cam-pip"><video id="cam-pip-video" playsinline muted autoplay></video></div>
+  <div id="rec-ind">● REC <span id="rec-time">0:00</span></div>
+  <div id="cam-panel">
+    <div class="cp-head"><b>📷 Camera</b><button class="tbtn" id="cp-close">Done</button></div>
+    <div class="cp-row"><span class="cp-lbl">View</span><div class="seg" id="cp-mode"><button data-v="off">Off</button><button data-v="full">Full screen</button><button data-v="corner">Corner</button></div></div>
+    <div class="cp-row"><span class="cp-lbl">Camera</span><div class="seg" id="cp-facing"><button data-v="user">Front</button><button data-v="environment">Rear</button></div><button class="tbtn" id="cp-flip">⟲ Flip</button><button class="tbtn" id="cp-mirror">Mirror</button></div>
+    <div class="cp-row"><span class="cp-lbl">Script backdrop</span><span class="cp-end">see‑through</span><input type="range" id="cp-backdrop" min="0" max="95" step="5"><span class="cp-end">solid</span></div>
+    <div class="cp-row"><span class="cp-lbl">Record</span><div class="seg" id="cp-mic"><button data-v="0">Camera + show audio</button><button data-v="1">+ my mic</button></div></div>
+    <div class="cp-note" id="cp-note">Recordings save to your Downloads as PRACTICE - show - date.webm. The script is not in the video.</div>
+  </div>
   <div id="track-marker" style="display:none;position:absolute;left:0;right:0;height:3px;background:var(--success);opacity:.85;z-index:55;pointer-events:none"><span style="position:absolute;right:16px;top:-18px;font-size:11px;font-weight:800;color:var(--success);letter-spacing:2px">AUDIO</span></div>
 
   <div class="thumb" id="thumb">
@@ -676,8 +716,8 @@ KING (V.O.): Hear my command!
       <button class="sk ico" id="b-fs" title="Fullscreen">⛶</button><button class="sk ico" id="b-settings" title="Settings">⚙</button>
       <button class="sk" id="t-back">−2s</button>
       <span style="position:relative;display:inline-flex"><button class="play" id="t-play"><span>▶</span></button><span id="from-lbl"></span></span>
-      <button class="sk" id="t-fwd">+2s</button><button class="sk" id="t-resync" title="Re-seat the clock on the audio">⟲ Sync</button><button class="sk" id="t-fs" title="Fullscreen on/off">⛶</button><span class="rclock" id="p-clock" style="display:none;font-size:16px;min-width:0;padding:6px 10px;white-space:nowrap">0:00.0</span>
-      <div class="paused-row" id="paused-row"><button class="sk" id="p-start" title="Back to the very beginning">⏮ Start</button><button class="sk" id="p-cues">Cues</button><button class="sk" id="p-wl">Word Lab here</button><span class="pair"><button class="sk" id="p-fminus" title="Smaller text">A−</button><button class="sk" id="p-fplus" title="Larger text">A+</button></span><button class="sk" id="p-lead" title="Tap to cycle the show lead">Lead 0.50</button><button class="sk" id="p-backup" title="Backup">⤓</button></div>
+      <button class="sk" id="t-fwd">+2s</button><button class="sk" id="t-resync" title="Re-seat the clock on the audio">⟲ Sync</button><button class="sk" id="t-fs" title="Fullscreen on/off">⛶</button><button class="sk" id="t-rec" title="Record a practice video" style="display:none">● Rec</button><span class="rclock" id="p-clock" style="display:none;font-size:16px;min-width:0;padding:6px 10px;white-space:nowrap">0:00.0</span>
+      <div class="paused-row" id="paused-row"><button class="sk" id="p-start" title="Back to the very beginning">⏮ Start</button><button class="sk" id="p-cam" title="Camera view and practice recording">📷 Camera</button><button class="sk" id="p-cues">Cues</button><button class="sk" id="p-wl">Word Lab here</button><span class="pair"><button class="sk" id="p-fminus" title="Smaller text">A−</button><button class="sk" id="p-fplus" title="Larger text">A+</button></span><button class="sk" id="p-lead" title="Tap to cycle the show lead">Lead 0.50</button><button class="sk" id="p-backup" title="Backup">⤓</button></div>
       <div id="stamp-wrap" style="display:none;flex:1;max-width:260px;min-width:120px"><button class="stamp-btn" id="t-stamp" style="width:100%;max-width:none">TAP: START / END</button><div class="key-hint" id="key-hint">Space = tap · Z = undo · P = play · 1/2/3 = grain · ← → = 2s</div></div>
     </div>
   </div>
@@ -1102,9 +1142,9 @@ let stampHistory=[];
 
 audio.addEventListener('ended',()=>{pause();});
 audio.addEventListener('error',()=>{if(audio.src&&audio.src!==location.href){toast('Audio could not load');}});
-async function play(){if(!audio.src)return false;$('perf').classList.remove('paused-tools');if($('perf').classList.contains('active'))wake(true);if(mode==='perform'&&fromLine!=null&&fromLine>=0){const t=fromLineTime(fromLine);const ln=fromLine;setFromLine(null);try{audio.currentTime=t;}catch(e){}snapClock();toast('Playing from line '+(ln+1));}try{await audio.play();isPlaying=true;setPlayIcon('❚❚');$('d-play').textContent='❚❚';if(mode==='perform'){freeScroll(false);autoResyncStart();}return true;}catch(e){toast('Tap play again');return false;}}
+async function play(){if(!audio.src)return false;setTimeout(()=>{if(typeof camBarH==='function')camBarH();},60);$('perf').classList.remove('paused-tools');if($('perf').classList.contains('active'))wake(true);if(mode==='perform'&&fromLine!=null&&fromLine>=0){const t=fromLineTime(fromLine);const ln=fromLine;setFromLine(null);try{audio.currentTime=t;}catch(e){}snapClock();toast('Playing from line '+(ln+1));}try{await audio.play();isPlaying=true;setPlayIcon('❚❚');$('d-play').textContent='❚❚';if(mode==='perform'){freeScroll(false);autoResyncStart();}return true;}catch(e){toast('Tap play again');return false;}}
 function setPlayIcon(ch){const b=$('t-play');const sp=b.querySelector('span');if(sp)sp.textContent=ch;else b.textContent=ch;}
-function pause(){audio.pause();isPlaying=false;$('perf').classList.toggle('paused-tools',mode==='perform');renderPausedRow();if(mode==='perform')autoResyncStop();setPlayIcon('▶');$('d-play').textContent='▶';if(mode==='perform'&&$('perf').classList.contains('active'))freeScroll(true);}
+function pause(){audio.pause();setTimeout(()=>{if(typeof camBarH==='function')camBarH();},60);isPlaying=false;$('perf').classList.toggle('paused-tools',mode==='perform');renderPausedRow();if(mode==='perform')autoResyncStop();setPlayIcon('▶');$('d-play').textContent='▶';if(mode==='perform'&&$('perf').classList.contains('active'))freeScroll(true);}
 function seek(d){audio.currentTime=Math.max(0,Math.min(audio.duration||0,audio.currentTime+d));if(mode==='perform'&&!isPlaying)setTimeout(()=>freeScroll(true),30);}
 async function loadBlob(blob){audioBlob=blob;setTimeout(checkAudioHealth,0);return new Promise(res=>{if(audio.src)URL.revokeObjectURL(audio.src);audio.src=URL.createObjectURL(blob);const done=()=>{audio.removeEventListener('loadedmetadata',done);res(true);};audio.addEventListener('loadedmetadata',done);audio.load();});}
 
@@ -1117,11 +1157,12 @@ async function wake(on){wantWake=!!on;
   if(document.visibilityState!=='visible')return;
   if('wakeLock' in navigator){try{if(!wakeLock||wakeLock.released){wakeLock=await navigator.wakeLock.request('screen');wakeMode='lock';wakeLock.addEventListener('release',()=>{wakeLock=null;if(wantWake)setTimeout(()=>wake(true),500);});}return;}catch(e){/* refused (battery saver, policy) → fall back */}}
   wakeVideo(true);}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wantWake)wake(true);});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wantWake)wake(true);if(document.visibilityState==='hidden'&&typeof cam!=='undefined'&&cam.rec)camRecStop();});
 document.addEventListener('fullscreenchange',()=>{if(wantWake)setTimeout(()=>wake(true),300);});
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');document.body.classList.toggle('performing',id==='perf');
   if(id==='perf'){wake(true);startLoop();}else{wake(false);stopLoop();pause();$('drawer').classList.remove('open');$('sheet').classList.remove('open');}
+  if(typeof camApply==='function')setTimeout(camApply,0);if(id!=='perf'){const cp=$('cam-panel');if(cp)cp.classList.remove('open');}
   if(id==='home')renderHome();}
 
 // ================= SCRIPT PARSING =================
@@ -1244,7 +1285,7 @@ function enterPerf(m){
   if(m==='perform'){audio.currentTime=0;}
   requestAnimationFrame(()=>{if(mode==='rehearse'||(mode==='perform'&&!isPlaying))freeScroll(true);});
 }
-function setMode(m){document.body.classList.toggle('perf-mode',m==='perform');$('perf').classList.toggle('paused-tools',m==='perform'&&!isPlaying);if(m==='perform'&&typeof renderPausedRow==='function')renderPausedRow();if(m!=='perform'&&typeof hideCueOv==='function')hideCueOv();const rb=$('t-resync');if(rb)rb.style.display=m==='perform'?'':'none';const fb=$('t-fs');if(fb)fb.style.display=m==='perform'?'':'none';
+function setMode(m){document.body.classList.toggle('perf-mode',m==='perform');if(typeof camApply==='function')setTimeout(camApply,0);$('perf').classList.toggle('paused-tools',m==='perform'&&!isPlaying);if(m==='perform'&&typeof renderPausedRow==='function')renderPausedRow();if(m!=='perform'&&typeof hideCueOv==='function')hideCueOv();const rb=$('t-resync');if(rb)rb.style.display=m==='perform'?'':'none';const fb=$('t-fs');if(fb)fb.style.display=m==='perform'?'':'none';
   if(mode==='rehearse'&&m!=='rehearse'){sortCues();persistShow(show);}
   mode=m;selectedId=null;$('sheet').classList.remove('open');
   const tele=$('tele');const badge=$('mode-badge');
@@ -1680,6 +1721,56 @@ async function saveShowAs(n){const oldName=(show.name||'').trim();const newName=
     persistShow(copy);show=copy;toast('Saved as new show: '+newName);}
   else{show.name=newName;persistShow(show);toast('Saved');}}
 $('q-fs').onclick=()=>$('d-fs').click();$('q-settings').onclick=()=>$('d-settings').click();$('q-save').onclick=()=>$('d-save').click();$('q-export').onclick=()=>$('d-export').click();$('q-exit').onclick=()=>$('d-exit').click();
+// ================= CAMERA MODE + PRACTICE RECORDING =================
+const cam={stream:null,facing:null,rec:null,chunks:[],recStart:0,recTimer:null,micStream:null,dest:null};
+function camSet(){return{mode:settings.camMode||'off',facing:settings.camFacing||'user',mirror:settings.camMirror!==false,backdrop:settings.camBackdrop!=null?+settings.camBackdrop:55,mic:!!settings.camMic,corner:settings.camCorner||'bl'};}
+async function camStart(){const c=camSet();if(cam.stream&&cam.facing===c.facing)return true;camStopStream();
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){toast('Camera not available in this browser');return false;}
+  try{cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:c.facing,width:{ideal:1920},height:{ideal:1080}},audio:false});cam.facing=c.facing;
+    $('cam-video').srcObject=cam.stream;$('cam-pip-video').srcObject=cam.stream;try{await $('cam-video').play();}catch(e){}try{await $('cam-pip-video').play();}catch(e){}return true;}
+  catch(e){cam.stream=null;toast(location.protocol==='https:'?'Camera was not allowed ('+e.name+')':'Camera needs the web address: open mykegeter.github.io/stage-prompter');settings.camMode='off';saveSettings();camApply();return false;}}
+function camStopStream(){if(cam.stream){cam.stream.getTracks().forEach(t=>t.stop());cam.stream=null;cam.facing=null;}$('cam-video').srcObject=null;$('cam-pip-video').srcObject=null;}
+async function camApply(){const c=camSet();const onPerf=$('perf').classList.contains('active')&&mode==='perform';const want=onPerf&&c.mode!=='off';
+  document.body.classList.toggle('cam-full',want&&c.mode==='full');document.body.classList.toggle('cam-corner',want&&c.mode==='corner');
+  document.documentElement.style.setProperty('--cam-a',(c.backdrop/100).toFixed(2));
+  const mir=c.mirror&&c.facing==='user';$('cam-video').classList.toggle('cam-mirror',mir);$('cam-pip-video').classList.toggle('cam-mirror',mir);
+  $('cam-pip').className=c.corner;camBarH();$('t-rec').style.display=want?'':'none';
+  if(want){await camStart();}else{if(cam.rec)camRecStop();camStopStream();}
+  renderCamPanel();}
+function camBarH(){const t=$('thumb');let h=0;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).visibility!=='hidden'&&+getComputedStyle(t).opacity>0.05)h=Math.max(0,innerHeight-r.top);}document.documentElement.style.setProperty('--bar-h',h+'px');}
+function renderCamPanel(){camBarH();const c=camSet();document.querySelectorAll('#cp-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.mode));document.querySelectorAll('#cp-facing button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.facing));
+  $('cp-mirror').classList.toggle('on',c.mirror);$('cp-mirror').textContent=c.mirror?'Mirror ✓':'Mirror';$('cp-backdrop').value=c.backdrop;document.querySelectorAll('#cp-mic button').forEach(b=>b.classList.toggle('on',+b.dataset.v===(c.mic?1:0)));
+  $('cp-backdrop').disabled=c.mode!=='full';$('p-cam').classList.toggle('on',c.mode!=='off');}
+$('p-cam').onclick=()=>{$('cam-panel').classList.toggle('open');renderCamPanel();};$('cp-close').onclick=()=>$('cam-panel').classList.remove('open');
+document.querySelectorAll('#cp-mode button').forEach(b=>b.onclick=()=>{settings.camMode=b.dataset.v;saveSettings();camApply();});
+document.querySelectorAll('#cp-facing button').forEach(b=>b.onclick=()=>{settings.camFacing=b.dataset.v;saveSettings();if(cam.rec){toast('Stop recording to switch cameras');return;}camStopStream();camApply();});
+$('cp-flip').onclick=()=>{if(cam.rec){toast('Stop recording to switch cameras');return;}settings.camFacing=camSet().facing==='user'?'environment':'user';saveSettings();camStopStream();camApply();};
+$('cp-mirror').onclick=()=>{settings.camMirror=!camSet().mirror;saveSettings();camApply();};
+$('cp-backdrop').oninput=e=>{settings.camBackdrop=+e.target.value;document.documentElement.style.setProperty('--cam-a',(settings.camBackdrop/100).toFixed(2));};$('cp-backdrop').onchange=()=>saveSettings();
+document.querySelectorAll('#cp-mic button').forEach(b=>b.onclick=()=>{settings.camMic=b.dataset.v==='1';saveSettings();renderCamPanel();});
+// corner window: drag and snap to the nearest corner
+(function(){const el=$('cam-pip');let sx=0,sy=0,drag=false,ox=0,oy=0;
+  el.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX;sy=e.clientY;const r=el.getBoundingClientRect();ox=r.left;oy=r.top;try{el.setPointerCapture(e.pointerId);}catch(x){}e.stopPropagation();});
+  el.addEventListener('pointermove',e=>{if(!drag)return;el.style.left=(ox+e.clientX-sx)+'px';el.style.top=(oy+e.clientY-sy)+'px';el.style.right='auto';el.style.bottom='auto';});
+  const end=e=>{if(!drag)return;drag=false;const r=el.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;const k=(cy<innerHeight/2?'t':'b')+(cx<innerWidth/2?'l':'r');el.style.left=el.style.top=el.style.right=el.style.bottom='';settings.camCorner=k;saveSettings();el.className=k;};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);el.addEventListener('click',e=>e.stopPropagation());})();
+// recording: camera video + the show audio (+ mic optionally); the script overlay is not recorded
+function recMime(){const opts=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];return opts.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';}
+async function camRecStart(){if(!cam.stream&&!(await camStart()))return;if(!window.MediaRecorder){toast('Recording is not supported in this browser');return;}
+  const tracks=[...cam.stream.getVideoTracks()];
+  try{if(await smEnsure()){if(!cam.dest){cam.dest=sm.ctx.createMediaStreamDestination();sm.src.connect(cam.dest);}tracks.push(...cam.dest.stream.getAudioTracks());}}catch(e){console.warn('show audio not captured',e);}
+  if(camSet().mic){try{cam.micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false}});const ms=sm.ctx.createMediaStreamSource(cam.micStream);ms.connect(cam.dest);cam.micNode=ms;}catch(e){toast('Microphone not allowed; recording without it');}}
+  const mime=recMime();try{cam.rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:5000000}:{});}catch(e){toast('Could not start recording');cam.rec=null;return;}
+  cam.chunks=[];cam.rec.ondataavailable=e=>{if(e.data&&e.data.size)cam.chunks.push(e.data);};
+  cam.rec.onstop=()=>{const type=(cam.rec&&cam.rec.mimeType)||mime||'video/webm';const ext=/mp4/.test(type)?'mp4':'webm';const blob=new Blob(cam.chunks,{type});const d=new Date();const stamp=d.toISOString().slice(0,10)+' '+String(d.getHours()).padStart(2,'0')+'.'+String(d.getMinutes()).padStart(2,'0');
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='PRACTICE - '+safeName(show&&show.name)+' - '+stamp+'.'+ext;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+    toast('Practice video saved to Downloads ('+Math.round(blob.size/1048576)+' MB)');cam.rec=null;cam.chunks=[];};
+  cam.rec.start(1000);cam.recStart=Date.now();document.body.classList.add('recording');$('t-rec').classList.add('on');$('t-rec').textContent='■ Stop rec';
+  cam.recTimer=setInterval(()=>{const s=Math.floor((Date.now()-cam.recStart)/1000);$('rec-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},500);
+  if(!isPlaying)play();}
+function camRecStop(){if(cam.rec&&cam.rec.state!=='inactive')cam.rec.stop();clearInterval(cam.recTimer);document.body.classList.remove('recording');$('t-rec').classList.remove('on');$('t-rec').textContent='● Rec';$('rec-time').textContent='0:00';
+  if(cam.micStream){cam.micStream.getTracks().forEach(t=>t.stop());cam.micStream=null;}if(cam.micNode){try{cam.micNode.disconnect();}catch(e){}cam.micNode=null;}}
+$('t-rec').onclick=e=>{e.stopPropagation();if(cam.rec)camRecStop();else camRecStart();};
 function renderPausedRow(){const l=$('p-lead');if(l)l.textContent='Lead '+(+settings.lead||0).toFixed(2);}
 function stepFont(d){const v=Math.max(20,Math.min(64,(+$('d-font').value||32)+d));$('d-font').value=v;$('d-font').dispatchEvent(new Event('input'));toast(v+'px');}
 $('p-start').onclick=()=>{pause();try{audio.currentTime=0;}catch(e){}snapClock();cueDismissed.clear();syncCorr=0;setTimeout(()=>{freeScroll(true);$('tele').scrollTop=0;pausedScrollTop=0;setFromLine(null);update();},40);toast('At the start');};
@@ -2179,7 +2270,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.50');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.51');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
@@ -2249,6 +2340,7 @@ document.addEventListener('keydown',e=>{if(!$('perf').classList.contains('active
 
 // ================= INIT =================
 applySettings();renderHome();renderKeyHelp();
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
 </html>
