@@ -4,7 +4,7 @@
 button{font-size:18px;padding:12px 18px;margin:6px 6px 0 0;border-radius:10px;border:0;background:#f5a623;color:#000;font-weight:700}
 .ok{color:#58d68d}.bad{color:#ff6b6b}</style></head><body>
 <video id="v" playsinline muted autoplay></video>
-<div id="p"><b>Stage Prompter camera test</b><div id="r"></div>
+<div id="p"><b>Stage Prompter camera test (HD)</b><div id="r"></div>
 <button id="go">Start front camera</button><button id="flip">Flip</button></div>
 <script>
 const r=document.getElementById('r');let facing='user',stream=null;
@@ -13,7 +13,7 @@ line('Page address type: '+location.protocol);
 line('Secure context: '+(window.isSecureContext?'YES':'NO'),window.isSecureContext);
 line('Camera API present: '+(!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)?'YES':'NO'),!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia));
 async function start(){try{if(stream)stream.getTracks().forEach(t=>t.stop());
-  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1920},height:{ideal:1080}},audio:false});
   const v=document.getElementById('v');v.srcObject=stream;v.style.transform=facing==='user'?'scaleX(-1)':'none';await v.play();
   const s=stream.getVideoTracks()[0].getSettings();line(`✓ Camera ON (${facing==='user'?'front':'rear'}) ${s.width||'?'}×${s.height||'?'} — the app CAN use the camera this way.`,true);}
  catch(e){line('✗ Camera failed: '+e.name+' — '+e.message,false);}}
