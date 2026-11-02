@@ -133,6 +133,23 @@ body.cam-corner #cam-pip{display:block}
 #rec-ind{position:absolute;left:14px;top:max(12px,env(safe-area-inset-top));z-index:60;background:rgba(0,0,0,.65);color:#ff5252;font-weight:800;font-size:13px;padding:5px 10px;border-radius:9px;display:none}
 body.recording #rec-ind{display:block}
 #t-rec.on{background:#e53935;color:#fff}
+#rec-ind{top:auto!important;bottom:calc(var(--bar-h,0px) + 12px)}
+body.cam-corner #rec-ind{left:auto;right:14px}
+body.cam-under #perf .cues{left:50%;right:0;padding-left:12px;padding-right:18px}
+body.cam-under #perf .tele.scrollable .cues{left:0;margin-left:50%}
+.home-sec{display:flex;align-items:center;gap:8px;width:100%;background:var(--console-gray);border:1px solid #33373e;color:var(--ui);border-radius:10px;padding:12px 14px;margin:14px 0 8px;font-weight:800;font-size:14px;letter-spacing:.3px;cursor:pointer;text-align:left}
+.home-sec .hs-n{margin-left:auto;color:var(--upcoming);font-weight:600;font-size:12px}
+.home-sec-body.closed{display:none}
+.take-n{color:var(--yellow)}
+#showpage .sp-video{width:100%;max-height:52vh;background:#000;border-radius:12px;display:block}
+#showpage .sp-empty{background:var(--console-gray);border-radius:12px;padding:30px 16px;text-align:center;color:var(--upcoming);font-size:14px}
+.sp-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.sp-actions .btn{width:auto;flex:1;min-width:120px;margin:0;padding:12px}
+.take{display:flex;align-items:center;gap:10px;background:var(--console-gray);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px}
+.take.on{outline:2px solid var(--yellow)}
+.take .tk-play{width:44px;height:34px;border-radius:7px;background:#3a3530;border:0;color:#fff;font-size:14px;cursor:pointer}
+.take .tk-info{flex:1;min-width:0}.take .tk-sub{color:var(--upcoming);font-size:11px}
+.sp-script{white-space:pre-wrap;color:var(--upcoming);font-size:14px;line-height:1.5;background:var(--console-gray);border-radius:10px;padding:12px;max-height:40vh;overflow:auto}
 #rec-count{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:640;font-size:28vmin;font-weight:900;color:#fff;text-shadow:0 4px 20px #000;pointer-events:none}
 #rec-count.on{display:flex}
 body.cam-text #perf{--now-pos:18vh}
@@ -477,7 +494,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.52</div>
+<div id="ver-label" title="Tap to copy version">v3.54</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -534,6 +551,22 @@ Lines with no name become narration."></textarea>
 </div>
 
 <!-- ===== TEXT INPUT (text only) ===== -->
+<div id="showpage" class="screen">
+  <div class="header">
+    <button class="hbtn" id="sp-back">← Back</button>
+    <h1 id="sp-title" style="font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Show</h1>
+    <span style="width:44px"></span>
+  </div>
+  <div id="sp-player"></div>
+  <div class="sp-actions" id="sp-actions"></div>
+  <p class="section-title" style="display:flex;align-items:center">Takes <span id="sp-count" style="margin-left:8px"></span><button class="small-btn" id="sp-add" style="margin-left:auto">+ Add video</button></p>
+  <div id="sp-takes"></div>
+  <p class="hint" id="sp-hint">Takes are kept in this app on this device. Tap ⤓ Save to put a copy in Downloads.</p>
+  <p class="section-title" id="sp-script-title">Script</p>
+  <div class="sp-script" id="sp-script"></div>
+  <input type="file" id="sp-add-input" accept="video/*" style="display:none">
+</div>
+
 <div id="textinput" class="screen">
   <div class="header">
     <button class="hbtn" id="ti-back">← Back</button>
@@ -647,7 +680,8 @@ KING (V.O.): Hear my command!
     <p>While paused, the bar also shows a tools row: <b>⏮ Start</b> (back to 0:00, top of the script), <b>Cues</b>, <b>Word Lab here</b> (opens Word Lab on the line at the now position; Done returns to the show), <b>A− / A+</b> text size, the <b>Lead</b> chip (tap to cycle 0 / 0.25 / 0.50 / 0.75), and <b>⤓</b> backup. It disappears as soon as you press Play.</p>
     <p>The screen is kept awake the whole time the show screen is open (a system wake lock, re‑acquired whenever the phone drops it; a silent hidden video as fallback where the lock isn't allowed). If the screen ever dims anyway, check the phone's battery saver, which overrides both.</p>
     <p><b>📷 Camera</b> (paused tools row) shows the camera behind the script (<i>Full screen</i>, with a <i>Script backdrop</i> slider from see‑through to solid) or in a small <i>Corner</i> window you can drag to any corner. Front/Rear, Flip and Mirror are in the same panel. With the camera on, <b>● Rec</b> appears on the control bar: it records the camera plus the show audio (and your mic if chosen) and saves <code>PRACTICE - show - date.webm</code> to Downloads when you tap ■ Stop rec. The script itself is not in the video. Camera mode needs the web address (mykegeter.github.io/stage-prompter), not a copy opened from Downloads.</p>
-    <p><b>Text‑only shows</b> work like a news teleprompter: tap <b>📷</b> on the control bar, choose Full screen, and the words scroll over the camera with the reading line near the top, close to the lens. Pick the mic under <i>Mic for recording</i> (phone mic or a connected Bluetooth mic; tap ↻ after connecting one). <b>● Rec</b> counts 3‑2‑1, then starts recording and scrolling.</p>
+    <p><b>Text‑only shows</b> work like a news teleprompter: tap <b>📷</b> on the control bar, choose Full screen, and the words scroll over the camera with the reading line near the top, close to the lens. Pick the mic under <i>Mic for recording</i> (phone mic or a connected Bluetooth mic; tap ↻ after connecting one). <b>● Rec</b> counts 3‑2‑1, then starts recording and scrolling. On the open Fold the words move to the right half, under the lens (Camera panel → <i>Words under camera</i>).</p>
+    <p><b>Home page:</b> shows are grouped into 🎵 Puppet shows and 📝 Text scripts (tap a header to fold it). Tap any show to open its page: play your practice <b>takes</b>, ⤓ Save one to Downloads, ✕ delete, or + Add video. Every ● Rec take is kept with its show in this app on this device — clearing Edge's site data would erase takes you haven't saved.</p>
     <p><b>⛶</b> on the control bar toggles fullscreen at any time. <b>⟲ Sync</b> on the control bar re-seats the display clock on the audio if the phone ever hiccups. With <i>Auto-resync</i> on (Settings → Timing) the show listens to the speaker and applies that correction by itself; stamps are never touched, and a corner note can show each correction.</p>
     <p><b>Show cues.</b> Warnings for yourself, separate from the script timings: an upcoming <b>character change</b> (made automatically from the script) or <b>your own note</b> ("wiggle Samuel", "fog on"). Add one in Word Lab with <b>C</b> at the clock, with <i>+ Cue before this line</i>, or in the script as <code>[CUE: get KING on right hand]</code> (<code>[CUE 5s: …]</code> sets its own warn‑ahead) on the line before it applies. The <b>Cues</b> tab (and ⋯ → Cues in the show) slides up the full list: tick/untick, edit the note, set warn‑ahead and style per cue. On the show screen, <b>while paused</b>, <b>press and hold a character pill</b> to add a cue before that line or manage the cues on it, and <b>hold a ROD or ♪ note</b> to turn it into a cue (a ♪ cue fires when the music starts, at the end of the line before it; a ROD cue at its line's start); text and blank space do nothing. While a cue is showing, <b>press and hold</b> the banner, card or the glow's label to hide that cue, stop warning for that character, warn earlier/later, edit it, change its style, or dismiss it for now. Style is layered: a cue's own style wins, then the show's style (top of the Cues sheet), then the default in Settings → Show cues; Settings shows a note when the open show overrides it. <i>Banner</i> (top or bottom strip with countdown), <i>Edge glow</i> (frame pulses in the character's colour, small label in a corner of your choice), <i>Inline</i> (a coloured rule in the script above the line it belongs to; a cue with only a time and no line shows as a card instead), <i>Card</i> (small card in a corner of your choice).</p>
     <p>Before the first show on a new device: open Word Lab once so the audio check runs, confirm <b>Show lead</b> is 0, and play a line with <b>▶ Preview as show</b>.</p>
@@ -708,9 +742,10 @@ KING (V.O.): Hear my command!
     <div class="cp-head"><b>📷 Camera</b><button class="tbtn" id="cp-close">Done</button></div>
     <div class="cp-row"><span class="cp-lbl">View</span><div class="seg" id="cp-mode"><button data-v="off">Off</button><button data-v="full">Full screen</button><button data-v="corner">Corner</button></div></div>
     <div class="cp-row"><span class="cp-lbl">Camera</span><div class="seg" id="cp-facing"><button data-v="user">Front</button><button data-v="environment">Rear</button></div><button class="tbtn" id="cp-flip">⟲ Flip</button><button class="tbtn" id="cp-mirror">Mirror</button></div>
+    <div class="cp-row"><span class="cp-lbl">Words under camera (open Fold)</span><div class="seg" id="cp-under"><button data-v="auto">Auto</button><button data-v="on">On</button><button data-v="off">Off</button></div></div>
     <div class="cp-row"><span class="cp-lbl">Script backdrop</span><span class="cp-end">see‑through</span><input type="range" id="cp-backdrop" min="0" max="95" step="5"><span class="cp-end">solid</span></div>
     <div class="cp-row"><span class="cp-lbl" id="cp-mic-lbl">Mic for recording</span><select id="cp-mic" style="flex:1;min-width:180px;padding:8px;border-radius:8px;background:var(--stage-black);color:inherit;border:1px solid #444"></select><button class="tbtn" id="cp-mic-refresh" title="Look for mics again (connect Bluetooth first)">↻</button></div>
-    <div class="cp-note" id="cp-note">Recordings save to your Downloads as PRACTICE - show - date.webm. The script is not in the video. Connect a Bluetooth mic first, then tap ↻ to see it in the list.</div>
+    <div class="cp-note" id="cp-note">Each take is kept with this show (open the show from Home to watch it, or ⤓ Save to Downloads). The script is not in the video. Connect a Bluetooth mic first, then tap ↻ to see it in the list.</div>
   </div>
   <div id="track-marker" style="display:none;position:absolute;left:0;right:0;height:3px;background:var(--success);opacity:.85;z-index:55;pointer-events:none"><span style="position:absolute;right:16px;top:-18px;font-size:11px;font-weight:800;color:var(--success);letter-spacing:2px">AUDIO</span></div>
 
@@ -1018,7 +1053,7 @@ function persistShow(s){const shows=loadShows();const i=shows.findIndex(x=>x.id=
   if(i>=0)shows[i]={...s,updatedAt:now};else shows.push({...s,createdAt:now,updatedAt:now});
   localStorage.setItem(STORAGE_KEY,JSON.stringify(shows));markSaved();}
 function markSaved(){const t=new Date();const txt='Saved ✓ '+t.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});['wl-saved','se-saved','wl-save'].forEach(id=>{const el=$(id);if(!el)return;if(id!=='wl-save')el.textContent=txt;el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');});}
-function deleteShow(id){localStorage.setItem(STORAGE_KEY,JSON.stringify(loadShows().filter(s=>s.id!==id)));deleteAudio(id);}
+function deleteShow(id){localStorage.setItem(STORAGE_KEY,JSON.stringify(loadShows().filter(s=>s.id!==id)));deleteAudio(id);getTakes(id).then(ts=>ts.forEach(t=>delTake(t.id)));}
 
 // audio storage (IndexedDB)
 let dbp=null;
@@ -1026,6 +1061,14 @@ function db(){if(dbp)return dbp;dbp=new Promise((res,rej)=>{const r=indexedDB.op
   r.onupgradeneeded=()=>r.result.createObjectStore('audio');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});return dbp;}
 async function putAudio(id,blob){try{const d=await db();await new Promise((res,rej)=>{const t=d.transaction('audio','readwrite');t.objectStore('audio').put(blob,id);t.oncomplete=res;t.onerror=()=>rej(t.error);});return true;}catch(e){console.warn(e);return false;}}
 async function getAudio(id){try{const d=await db();return await new Promise((res,rej)=>{const r=d.transaction('audio').objectStore('audio').get(id);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});}catch(e){return null;}}
+// practice takes (videos) — separate database so the audio store is untouched
+let tdbp=null;
+function tdb(){if(tdbp)return tdbp;tdbp=new Promise((res,rej)=>{const r=indexedDB.open('stage_prompter_takes',1);
+  r.onupgradeneeded=()=>{const st=r.result.createObjectStore('takes',{keyPath:'id'});st.createIndex('showId','showId');};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});return tdbp;}
+async function putTake(t){try{const d=await tdb();await new Promise((res,rej)=>{const x=d.transaction('takes','readwrite');x.objectStore('takes').put(t);x.oncomplete=res;x.onerror=()=>rej(x.error);});return true;}catch(e){console.warn(e);return false;}}
+async function getTakes(showId){try{const d=await tdb();return await new Promise((res,rej)=>{const r=d.transaction('takes').objectStore('takes').index('showId').getAll(showId);r.onsuccess=()=>res((r.result||[]).sort((a,b)=>b.at-a.at));r.onerror=()=>rej(r.error);});}catch(e){return[];}}
+async function delTake(id){try{const d=await tdb();await new Promise(res=>{const x=d.transaction('takes','readwrite');x.objectStore('takes').delete(id);x.oncomplete=res;x.onerror=res;});}catch(e){}}
+async function countTakes(){const m={};try{const d=await tdb();  const ix=await new Promise(res=>{const out=[];const r=d.transaction('takes').objectStore('takes').index('showId').openKeyCursor();r.onsuccess=()=>{const c=r.result;if(c){out.push(c.key);c.continue();}else res(out);};r.onerror=()=>res(out);});ix.forEach(k=>m[k]=(m[k]||0)+1);}catch(e){}return m;}
 async function deleteAudio(id){try{const d=await db();d.transaction('audio','readwrite').objectStore('audio').delete(id);}catch(e){}}
 
 // ================= AUDIO HEALTH =================
@@ -1220,18 +1263,23 @@ function charOf(cue){if(cue.isMusic||cue.characterId==='music')return MUSIC;if(c
 async function renderHome(){
   const list=$('shows-list');const shows=loadShows().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
   if(!shows.length){list.innerHTML='<div class="empty">No saved shows yet</div>';return;}
-  list.innerHTML=shows.map(s=>{const isText=s.type==='text';
+  const tk=await countTakes();
+  const cardHtml=s=>{const isText=s.type==='text';
     const timed=(s.cues||[]).filter(c=>c.time!=null).length;
-    const meta=isText?`${(s.characters||[]).length} speakers`:`${(s.cues||[]).length} lines · ${timed} timed · <span id="aud-${s.id}">${esc(s.audioName||'no audio')}</span>`;
+    const nt=tk[s.id]||0;const takes=nt?` · <span class="take-n">🎬 ${nt} take${nt>1?'s':''}</span>`:'';
+    const meta=isText?`${((s.textContent||'').trim().split(/\s+/).filter(Boolean).length)} words · ~${Math.max(1,Math.round(((s.textContent||'').trim().split(/\s+/).filter(Boolean).length)/150))} min${takes}`:`${(s.cues||[]).length} lines · ${timed} timed · <span id="aud-${s.id}">${esc(s.audioName||'no audio')}</span>${takes}`;
     const o=s.origin;const from=o?`<span class="pf">${esc(o.file)}</span> <span class="pt">· imported ${when(o.at)}</span>`:(s.createdAt?`<span class="pt">created here · ${when(s.createdAt)}</span>`:`<span class="pt">unknown (before v3.24)</span>`);
     const editedAfter=o&&s.updatedAt&&s.updatedAt>o.at+3000;const edited=s.updatedAt?`<span class="pt">${when(s.updatedAt)}${editedAfter?' (after import)':''}</span>`:`<span class="pt">—</span>`;
     const b=s.lastBackup;const stale=b&&s.updatedAt&&s.updatedAt>b.at+1500;const backup=b?`<span class="pf">${esc(b.file)}</span> <span class="pt">· ${when(b.at)}</span> ${stale?'<span class="pw">· changed since</span>':'<span class="pg">· up to date</span>'}`:`<span class="pt">never</span>`;
     const prov=`<div class="prov"><div><b>From</b><span class="pv">${from}</span></div><div><b>Edited</b><span class="pv">${edited}</span></div><div><b>Backup</b><span class="pv">${backup}</span></div></div>`;
     return`<div class="card show-item"><div class="show-info" data-id="${s.id}"><div class="show-name"><span>${isText?'📝':'🎵'}</span>${esc(s.name||'Untitled')}</div><div class="show-meta">${meta}</div>${prov}</div>
-    ${isText?'':`<button class="small-btn relink" data-id="${s.id}" style="display:none">Re-link audio</button>`}<button class="small-btn exp" data-id="${s.id}" title="Export .json">⇪</button><button class="small-btn bk" data-id="${s.id}" title="Backup: script .txt + show .json">⤓</button><button class="icon-btn del" data-id="${s.id}">×</button></div>`;}).join('');
+    ${isText?'':`<button class="small-btn relink" data-id="${s.id}" style="display:none">Re-link audio</button>`}<button class="small-btn exp" data-id="${s.id}" title="Export .json">⇪</button><button class="small-btn bk" data-id="${s.id}" title="Backup: script .txt + show .json">⤓</button><button class="icon-btn del" data-id="${s.id}">×</button></div>`;};
+  const fold=settings.homeFold||{};const groups=[['audio','🎵 Puppet shows','audio + script',shows.filter(s=>s.type!=='text')],['text','📝 Text scripts','teleprompter',shows.filter(s=>s.type==='text')]];
+  list.innerHTML=groups.map(([k,t,sub,arr])=>`<button class="home-sec" data-k="${k}">${fold[k]?'▸':'▾'} ${t}<span class="hs-n">${sub} · ${arr.length}</span></button><div class="home-sec-body ${fold[k]?'closed':''}">${arr.length?arr.map(cardHtml).join(''):'<div class="empty" style="padding:10px 4px">None yet</div>'}</div>`).join('');
+  list.querySelectorAll('.home-sec').forEach(b=>b.onclick=()=>{const f=settings.homeFold||{};f[b.dataset.k]=!f[b.dataset.k];settings.homeFold=f;saveSettings();renderHome();});
   list.querySelectorAll('.exp').forEach(el=>el.onclick=()=>{const sh=loadShows().find(x=>x.id===el.dataset.id);if(sh)exportShowJson(sh);});
   list.querySelectorAll('.bk').forEach(el=>el.onclick=()=>{const sh=loadShows().find(x=>x.id===el.dataset.id);if(sh)backupShow(sh);});renderBackupNote();
-  list.querySelectorAll('.show-info').forEach(el=>el.onclick=()=>openShow(el.dataset.id));
+  list.querySelectorAll('.show-info').forEach(el=>el.onclick=()=>openShowPage(el.dataset.id));
   list.querySelectorAll('.del').forEach(el=>el.onclick=()=>{if(confirm('Delete this show?')){deleteShow(el.dataset.id);renderHome();}});
   list.querySelectorAll('.relink').forEach(el=>el.onclick=()=>{relinkId=el.dataset.id;$('relink-input').click();});
   for(const s of shows){if(s.type==='text')continue;const b=await getAudio(s.id);const btn=list.querySelector(`.relink[data-id="${s.id}"]`);const span=$('aud-'+s.id);
@@ -1256,6 +1304,42 @@ async function openShow(id){
   const timed=show.cues.filter(c=>c.time!=null).length;
   enterPerf(timed?'perform':'rehearse');
 }
+
+// ================= SHOW PAGE (takes) =================
+let spId=null,spReturn=null,spTakes=[],spCur=null,spUrl=null;
+function spFmt(sec){sec=Math.round(sec||0);return Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');}
+async function openShowPage(id){const s=loadShows().find(x=>x.id===id);if(!s){renderHome();return;}spId=id;spReturn=null;const isText=s.type==='text';
+  $('sp-title').textContent=(isText?'📝 ':'🎵 ')+(s.name||'Untitled');
+  const A=$('sp-actions');A.innerHTML=isText
+    ?'<button class="btn btn-primary" id="sp-read">▶ Read</button><button class="btn btn-primary" id="sp-rec">● Record new take</button><button class="btn btn-secondary" id="sp-edit">✎ Edit</button>'
+    :'<button class="btn btn-primary" id="sp-play">▶ Play show</button><button class="btn btn-secondary" id="sp-wl">Word Lab</button><button class="btn btn-secondary" id="sp-edit">✎ Edit script</button>';
+  if(isText){$('sp-read').onclick=()=>spLaunchText(false);$('sp-rec').onclick=()=>spLaunchText(true);$('sp-edit').onclick=()=>{spStopVideo();openShow(id);};}
+  else{$('sp-play').onclick=async()=>{spStopVideo();spReturn=id;await openShow(id);};
+    $('sp-wl').onclick=async()=>{spStopVideo();spReturn=id;await openShow(id);if($('perf').classList.contains('active')){setMode('rehearse');}};
+    $('sp-edit').onclick=async()=>{spStopVideo();spReturn=id;await openShow(id);if($('perf').classList.contains('active')&&typeof openScriptAt==='function')openScriptAt(0);};}
+  $('sp-script-title').textContent=isText?'Script':'Script lines';
+  $('sp-script').textContent=isText?(s.textContent||''):(s.cues||[]).map(c=>(c.char?c.char+': ':'')+(c.text||'')).join('\n');
+  showScreen('showpage');window.scrollTo(0,0);await spRefresh();}
+async function spRefresh(keep){spTakes=await getTakes(spId);$('sp-count').textContent=spTakes.length?'· '+spTakes.length:'';
+  if(!keep||!spTakes.find(t=>t.id===spCur))spCur=spTakes[0]?spTakes[0].id:null;spRenderPlayer();
+  $('sp-takes').innerHTML=spTakes.length?spTakes.map((t,i)=>`<div class="take ${t.id===spCur?'on':''}" data-id="${t.id}"><button class="tk-play" data-id="${t.id}">▶</button><div class="tk-info"><div><b>Take ${spTakes.length-i}</b>${t.added?' · added':''}</div><div class="tk-sub">${when(t.at)} · ${spFmt(t.dur)} · ${Math.max(1,Math.round((t.size||t.blob.size)/1048576))} MB</div></div><button class="small-btn tk-save" data-id="${t.id}">⤓ Save</button><button class="icon-btn tk-del" data-id="${t.id}">×</button></div>`).join('')
+    :'<div class="empty" style="padding:8px 2px">No takes yet. Record one with ● Rec (turn on 📷 Camera first), or add a video.</div>';
+  $('sp-takes').querySelectorAll('.tk-play,.tk-info').forEach(b=>b.onclick=()=>{spCur=b.dataset.id||b.parentNode.dataset.id;spRefresh(true).then(()=>{const v=$('sp-player').querySelector('video');if(v)v.play().catch(()=>{});});});
+  $('sp-takes').querySelectorAll('.tk-save').forEach(b=>b.onclick=()=>{const t=spTakes.find(x=>x.id===b.dataset.id);if(!t)return;const a=document.createElement('a');const u=URL.createObjectURL(t.blob);a.href=u;a.download=t.name||('PRACTICE - '+safeName(show&&show.name)+'.webm');document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);toast('Saved to Downloads');});
+  $('sp-takes').querySelectorAll('.tk-del').forEach(b=>b.onclick=async()=>{if(!confirm('Delete this take? This cannot be undone.'))return;await delTake(b.dataset.id);if(spCur===b.dataset.id)spCur=null;spRefresh(true);});}
+function spStopVideo(){const v=$('sp-player').querySelector('video');if(v)v.pause();}
+function spRenderPlayer(){if(spUrl){URL.revokeObjectURL(spUrl);spUrl=null;}const t=spTakes.find(x=>x.id===spCur);
+  if(!t){$('sp-player').innerHTML='<div class="sp-empty">🎬 Your takes will play here</div>';return;}
+  spUrl=URL.createObjectURL(t.blob);$('sp-player').innerHTML=`<video class="sp-video" controls playsinline src="${spUrl}"></video>`;}
+async function spLaunchText(record){spStopVideo();const s=loadShows().find(x=>x.id===spId);if(!s)return;show=JSON.parse(JSON.stringify(s));applyFontSize(show.fontSize!=null?show.fontSize:settings.fontSize);
+  textChars=show.characters||[];$('text-input-area').value=show.textContent||'';spReturn=spId;
+  if(record&&camSet().mode==='off'){settings.camMode='full';saveSettings();}
+  startTextPerf();if(record)setTimeout(()=>{if(cam.stream)camRecCountdown();else setTimeout(()=>camRecCountdown(),800);},700);}
+$('sp-back').onclick=()=>{spStopVideo();spId=null;showScreen('home');renderHome();};
+$('sp-add').onclick=()=>$('sp-add-input').click();
+$('sp-add-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f||!spId)return;
+  const dur=await new Promise(res=>{const v=document.createElement('video');v.preload='metadata';v.onloadedmetadata=()=>{res(isFinite(v.duration)?v.duration:0);URL.revokeObjectURL(v.src);};v.onerror=()=>res(0);v.src=URL.createObjectURL(f);});
+  const ok=await putTake({id:uid(),showId:spId,blob:f,at:f.lastModified||Date.now(),dur,size:f.size,name:f.name,mime:f.type,added:true});toast(ok?'Video added':'Could not store the video (phone storage full?)');spCur=null;spRefresh();});
 
 // ================= NEW SHOW =================
 let nsAudio=null,nsScriptText='';
@@ -1729,14 +1813,14 @@ async function saveShowAs(n){const oldName=(show.name||'').trim();const newName=
 $('q-fs').onclick=()=>$('d-fs').click();$('q-settings').onclick=()=>$('d-settings').click();$('q-save').onclick=()=>$('d-save').click();$('q-export').onclick=()=>$('d-export').click();$('q-exit').onclick=()=>$('d-exit').click();
 // ================= CAMERA MODE + PRACTICE RECORDING =================
 const cam={stream:null,facing:null,rec:null,chunks:[],recStart:0,recTimer:null,micStream:null,dest:null};
-function camSet(){return{mode:settings.camMode||'off',facing:settings.camFacing||'user',mirror:settings.camMirror!==false,backdrop:settings.camBackdrop!=null?+settings.camBackdrop:55,mic:!!settings.camMic,micId:settings.camMicId!=null?settings.camMicId:(settings.camMic?'default':''),corner:settings.camCorner||'bl'};}
+function camSet(){return{mode:settings.camMode||'off',facing:settings.camFacing||'user',mirror:settings.camMirror!==false,backdrop:settings.camBackdrop!=null?+settings.camBackdrop:55,mic:!!settings.camMic,under:settings.camUnder||'auto',micId:settings.camMicId!=null?settings.camMicId:(settings.camMic?'default':''),corner:settings.camCorner||'bl'};}
 async function camStart(){const c=camSet();if(cam.stream&&cam.facing===c.facing)return true;camStopStream();
   if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){toast('Camera not available in this browser');return false;}
   try{cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:c.facing,width:{ideal:1920},height:{ideal:1080}},audio:false});cam.facing=c.facing;
     $('cam-video').srcObject=cam.stream;$('cam-pip-video').srcObject=cam.stream;try{await $('cam-video').play();}catch(e){}try{await $('cam-pip-video').play();}catch(e){}return true;}
   catch(e){cam.stream=null;toast(location.protocol==='https:'?'Camera was not allowed ('+e.name+')':'Camera needs the web address: open mykegeter.github.io/stage-prompter');settings.camMode='off';saveSettings();camApply();return false;}}
 function camStopStream(){if(cam.stream){cam.stream.getTracks().forEach(t=>t.stop());cam.stream=null;cam.facing=null;}$('cam-video').srcObject=null;$('cam-pip-video').srcObject=null;}
-async function camApply(){const c=camSet();const onPerf=$('perf').classList.contains('active')&&(mode==='perform'||mode==='text');const want=onPerf&&c.mode!=='off';document.body.classList.toggle('cam-text',want&&mode==='text');const tc=$('t-cam');if(tc){tc.style.display=onPerf&&mode==='text'?'':'none';tc.classList.toggle('on',c.mode!=='off');}
+async function camApply(){const c=camSet();const onPerf=$('perf').classList.contains('active')&&(mode==='perform'||mode==='text');const want=onPerf&&c.mode!=='off';document.body.classList.toggle('cam-text',want&&mode==='text');document.body.classList.toggle('cam-under',want&&camUnderOn());const tc=$('t-cam');if(tc){tc.style.display=onPerf&&mode==='text'?'':'none';tc.classList.toggle('on',c.mode!=='off');}
   document.body.classList.toggle('cam-full',want&&c.mode==='full');document.body.classList.toggle('cam-corner',want&&c.mode==='corner');
   document.documentElement.style.setProperty('--cam-a',(c.backdrop/100).toFixed(2));
   const mir=c.mirror&&c.facing==='user';$('cam-video').classList.toggle('cam-mirror',mir);$('cam-pip-video').classList.toggle('cam-mirror',mir);
@@ -1744,7 +1828,9 @@ async function camApply(){const c=camSet();const onPerf=$('perf').classList.cont
   if(want){await camStart();}else{if(cam.rec)camRecStop();camStopStream();}
   renderCamPanel();}
 function camBarH(){const t=$('thumb');let h=0;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).visibility!=='hidden'&&+getComputedStyle(t).opacity>0.05)h=Math.max(0,innerHeight-r.top);}document.documentElement.style.setProperty('--bar-h',h+'px');}
-function renderCamPanel(){camBarH();const c=camSet();document.querySelectorAll('#cp-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.mode));document.querySelectorAll('#cp-facing button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.facing));
+function camUnderOn(){const u=camSet().under;if(u==='on')return true;if(u==='off')return false;const w=innerWidth,h=innerHeight;return w>=600&&w/h>0.7&&w/h<1.3;}
+addEventListener('resize',()=>{if(cam.stream||camSet().mode!=='off')camApply();});
+function renderCamPanel(){camBarH();document.querySelectorAll('#cp-under button').forEach(b=>b.classList.toggle('on',b.dataset.v===camSet().under));const c=camSet();document.querySelectorAll('#cp-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.mode));document.querySelectorAll('#cp-facing button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.facing));
   $('cp-mirror').classList.toggle('on',c.mirror);$('cp-mirror').textContent=c.mirror?'Mirror ✓':'Mirror';$('cp-backdrop').value=c.backdrop;renderMicList();
   $('cp-backdrop').disabled=c.mode!=='full';$('p-cam').classList.toggle('on',c.mode!=='off');}
 $('p-cam').onclick=()=>{$('cam-panel').classList.toggle('open');renderCamPanel();};$('cp-close').onclick=()=>$('cam-panel').classList.remove('open');
@@ -1760,6 +1846,7 @@ async function renderMicList(force){const sel=$('cp-mic');if(!sel)return;const c
   let cur=c.micId;if(textMode&&!cur)cur='default';if(!opts.some(o=>o[0]===cur))cur=textMode?'default':'';
   sel.innerHTML=opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');sel.value=cur;
   $('cp-mic-lbl').textContent=textMode?'Mic for recording':'Record';}
+document.querySelectorAll('#cp-under button').forEach(b=>b.onclick=()=>{settings.camUnder=b.dataset.v;saveSettings();camApply();});
 $('cp-mic').onchange=e=>{settings.camMicId=e.target.value;settings.camMic=!!e.target.value;saveSettings();};
 $('cp-mic-refresh').onclick=()=>renderMicList(true);
 $('t-cam').onclick=e=>{e.stopPropagation();$('cam-panel').classList.toggle('open');renderCamPanel();};
@@ -1781,10 +1868,13 @@ async function camRecStart(){if(cam.counting)return;if(!cam.stream&&!(await camS
   const mime=recMime();try{cam.rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:5000000}:{});}catch(e){toast('Could not start recording');cam.rec=null;return;}
   cam.chunks=[];cam.rec.ondataavailable=e=>{if(e.data&&e.data.size)cam.chunks.push(e.data);};
   cam.rec.onstop=()=>{const type=(cam.rec&&cam.rec.mimeType)||mime||'video/webm';const ext=/mp4/.test(type)?'mp4':'webm';const blob=new Blob(cam.chunks,{type});const d=new Date();const stamp=d.toISOString().slice(0,10)+' '+String(d.getHours()).padStart(2,'0')+'.'+String(d.getMinutes()).padStart(2,'0');
-    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='PRACTICE - '+safeName(show&&show.name)+' - '+stamp+'.'+ext;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);
-    toast('Practice video saved to Downloads ('+Math.round(blob.size/1048576)+' MB)');cam.rec=null;cam.chunks=[];};
+    const fname='PRACTICE - '+safeName(show&&show.name)+' - '+stamp+'.'+ext;const dur=(Date.now()-cam.recStart)/1000;const sid=show&&show.id;const known=sid&&loadShows().some(x=>x.id===sid);
+    const dl=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),60000);};
+    cam.rec=null;cam.chunks=[];
+    if(!known){dl();toast('Show not saved yet, so the take went to Downloads');return;}
+    putTake({id:uid(),showId:sid,blob,at:Date.now(),dur,size:blob.size,name:fname,mime:type}).then(ok=>{if(ok)toast('🎬 Take kept with this show ('+Math.max(1,Math.round(blob.size/1048576))+' MB). Exit to see it.');else{dl();toast('Could not keep the take in the app; saved to Downloads');}});};
   cam.rec.start(1000);cam.recStart=Date.now();document.body.classList.add('recording');$('t-rec').classList.add('on');$('t-rec').textContent='■ Stop rec';
-  cam.recTimer=setInterval(()=>{const s=Math.floor((Date.now()-cam.recStart)/1000);$('rec-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},500);
+  cam.recTimer=setInterval(()=>{camBarH();const s=Math.floor((Date.now()-cam.recStart)/1000);$('rec-time').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');},500);
   if(textMode){if(!autoScroll)startAutoScroll();}else if(!isPlaying)play();}
 async function camRecCountdown(){if(mode!=='text'){camRecStart();return;}if(autoScroll)stopAutoScroll();cam.counting=true;const el=$('rec-count');el.classList.add('on');
   for(const n of [3,2,1]){el.textContent=n;await new Promise(r=>setTimeout(r,1000));if(!cam.counting){el.classList.remove('on');return;}}
@@ -1899,7 +1989,7 @@ $('se-save').onclick=()=>{const parsed=parseScript($('se-text').value,show.chara
   const msg=[`${parsed.cues.length} lines`];if(stats.changedLines)msg.push(`${stats.changedLines} changed`);if(stats.untimedWords)msg.push(`${stats.untimedWords} word${stats.untimedWords>1?'s':''} need timing`);if(stats.lost)msg.push(`${stats.lost} removed`);
   toast(msg.join(' · '));returnFromScript();};
 $('d-clearall').onclick=()=>{if(mode==='text')return;if(!confirm('Clear ALL cue times for this show? Lines and text are kept.'))return;show.cues.forEach(c=>{c.time=null;c.end=null;if(c.words)c.words=c.words.map(()=>({start:null}));});persistShow(show);$('drawer').classList.remove('open');setMode('rehearse');toast('All times cleared');};
-$('d-exit').onclick=()=>{$('drawer').classList.remove('open');stopAutoScroll();if(mode!=='text'){persistShow(show);}pause();if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});showScreen(mode==='text'?'textinput':'home');};
+$('d-exit').onclick=()=>{$('drawer').classList.remove('open');stopAutoScroll();if(mode!=='text'){persistShow(show);}pause();if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(spReturn){const r=spReturn;spReturn=null;openShowPage(r);}else showScreen(mode==='text'?'textinput':'home');};
 
 // timeline
 function tlWindow(){const dur=audio.duration||1;if(!tlZoom)return[0,dur];const w=60;let s=audio.currentTime-w/2;s=Math.max(0,Math.min(dur-w,s));return[s,Math.max(s+w,s+1)];}
@@ -2291,7 +2381,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.52');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.54');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
