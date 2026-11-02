@@ -137,6 +137,24 @@ body.recording #rec-ind{display:block}
 body.cam-corner #rec-ind{left:auto;right:14px}
 body.cam-under #perf .cues{left:50%;right:0;padding-left:12px;padding-right:18px}
 body.cam-under #perf .tele.scrollable .cues{left:0;margin-left:50%}
+#studio .st-wrap{position:relative;background:#000;border-radius:12px;overflow:hidden;display:flex;justify-content:center;touch-action:none}
+#st-canvas{max-width:100%;max-height:48vh;display:block;touch-action:none}
+#st-cropbox{position:absolute;border:2px dashed var(--yellow);pointer-events:none;display:none;box-shadow:0 0 0 2000px rgba(0,0,0,.35)}
+.st-ctrl{display:flex;align-items:center;gap:8px;margin:8px 0}.st-ctrl input{flex:1;accent-color:var(--yellow)}
+#st-play{width:44px}#st-time{font-size:12px;color:var(--upcoming);min-width:80px;text-align:right}
+#st-before.on,#st-tabs button.on,.st-bg.on{background:var(--yellow);color:#000}
+#st-tabs{display:flex;background:var(--console-gray);border-radius:10px;padding:3px;margin:6px 0 10px}#st-tabs button{flex:1;border:0;background:transparent;color:var(--upcoming);font-weight:700;padding:10px 4px;border-radius:8px;font-size:13px}
+.st-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0;font-size:13px}.st-l{flex-basis:100%;color:var(--upcoming);font-size:12px}.st-row input[type=range]{flex:1;accent-color:var(--yellow)}.st-v{min-width:56px;text-align:right;font-size:12px;color:var(--upcoming)}
+.st-row select{flex:1;padding:8px;border-radius:8px;background:var(--stage-black);color:inherit;border:1px solid #444}
+.st-note{font-size:12px;color:var(--upcoming);background:var(--console-gray);border-radius:8px;padding:8px 10px;margin:8px 0}
+#st-panel .seg{max-width:none;flex-wrap:nowrap}
+.st-bgs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.st-bg{position:relative;height:72px;border-radius:9px;border:2px solid transparent;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:flex-end;justify-content:center;padding:4px;text-shadow:0 1px 3px #000;cursor:pointer}
+.st-bg.on{outline:3px solid var(--yellow);color:#fff}.st-add{background:transparent!important;border:2px dashed #666;align-items:center;text-shadow:none;color:var(--upcoming)}.st-bgdel{position:absolute;top:2px;right:6px;font-style:normal;font-size:16px}
+#st-prog{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:900;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:30px;text-align:center}#st-prog.on{display:flex}
+#st-prog .bar{width:80%;max-width:360px;height:10px;background:#333;border-radius:5px;overflow:hidden}#st-prog-bar{height:100%;width:0;background:var(--yellow)}
+#cam-gs{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none}body.gs-live.cam-full #cam-gs{display:block}body.gs-live.cam-full #cam-video{opacity:0}
+#cam-pip #cam-gs{position:absolute;inset:0;width:100%;height:100%}body.gs-live.cam-corner #cam-pip #cam-gs{display:block}body.gs-live.cam-corner #cam-pip-video{opacity:0}
+.tk-studio{background:var(--yellow)!important;color:#000!important;border-color:var(--yellow)!important}
 .home-sec{display:flex;align-items:center;gap:8px;width:100%;background:var(--console-gray);border:1px solid #33373e;color:var(--ui);border-radius:10px;padding:12px 14px;margin:14px 0 8px;font-weight:800;font-size:14px;letter-spacing:.3px;cursor:pointer;text-align:left}
 .home-sec .hs-n{margin-left:auto;color:var(--upcoming);font-weight:600;font-size:12px}
 .home-sec-body.closed{display:none}
@@ -494,7 +512,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.54</div>
+<div id="ver-label" title="Tap to copy version">v3.55</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -565,6 +583,24 @@ Lines with no name become narration."></textarea>
   <p class="section-title" id="sp-script-title">Script</p>
   <div class="sp-script" id="sp-script"></div>
   <input type="file" id="sp-add-input" accept="video/*" style="display:none">
+</div>
+
+<div id="studio" class="screen">
+  <div class="header">
+    <button class="hbtn" id="st-back">← Back</button>
+    <h1 id="st-title" style="font-size:17px">🎬 Studio</h1>
+    <button class="hbtn" id="st-make" style="background:var(--yellow);color:#000">Make video</button>
+  </div>
+  <div class="st-wrap" id="st-wrap"><canvas id="st-canvas"></canvas><div id="st-cropbox"></div></div>
+  <video id="st-src" playsinline preload="auto" style="display:none"></video>
+  <div class="st-ctrl"><button class="tbtn" id="st-play">▶</button><input type="range" id="st-scrub" min="0" max="1" step="0.01" value="0"><span id="st-time">0:00</span><button class="tbtn" id="st-before">Before</button></div>
+  <div id="st-status" style="font-size:12px;color:var(--yellow)"></div>
+  <div id="st-tabs"><button data-t="key">Key</button><button data-t="bg">Background</button><button data-t="edges">Edges</button><button data-t="crop">Crop</button></div>
+  <div id="st-panel"></div>
+  <div class="st-row"><span class="st-l">Make video as</span><div class="seg" id="st-format"><button data-v="mp4">MP4</button><button data-v="webm">WebM</button></div></div>
+  <div class="st-note">Make video saves a new take, "✨ Studio version". Your original take is kept.</div>
+  <input type="file" id="st-bg-input" accept="image/*,video/*" style="display:none">
+  <div id="st-prog"><div id="st-prog-msg">Making video…</div><div class="bar"><div id="st-prog-bar"></div></div><button class="tbtn" id="st-cancel">Cancel</button></div>
 </div>
 
 <div id="textinput" class="screen">
@@ -681,6 +717,7 @@ KING (V.O.): Hear my command!
     <p>The screen is kept awake the whole time the show screen is open (a system wake lock, re‑acquired whenever the phone drops it; a silent hidden video as fallback where the lock isn't allowed). If the screen ever dims anyway, check the phone's battery saver, which overrides both.</p>
     <p><b>📷 Camera</b> (paused tools row) shows the camera behind the script (<i>Full screen</i>, with a <i>Script backdrop</i> slider from see‑through to solid) or in a small <i>Corner</i> window you can drag to any corner. Front/Rear, Flip and Mirror are in the same panel. With the camera on, <b>● Rec</b> appears on the control bar: it records the camera plus the show audio (and your mic if chosen) and saves <code>PRACTICE - show - date.webm</code> to Downloads when you tap ■ Stop rec. The script itself is not in the video. Camera mode needs the web address (mykegeter.github.io/stage-prompter), not a copy opened from Downloads.</p>
     <p><b>Text‑only shows</b> work like a news teleprompter: tap <b>📷</b> on the control bar, choose Full screen, and the words scroll over the camera with the reading line near the top, close to the lens. Pick the mic under <i>Mic for recording</i> (phone mic or a connected Bluetooth mic; tap ↻ after connecting one). <b>● Rec</b> counts 3‑2‑1, then starts recording and scrolling. On the open Fold the words move to the right half, under the lens (Camera panel → <i>Words under camera</i>).</p>
+    <p><b>🎬 Studio</b> (on each take): replace a green screen, or use <i>AI cutout — for people only</i>. Key tab: 💧 Tap the green, then Similarity / Smoothness / Green spill; Matte view shows white = kept, black = replaced; save presets. Background tab: colours, gradients or your own photo/video, blur and light wrap. Edges: shrink/grow outline, brightness, contrast. Crop: drag a box to keep. <b>Make video</b> saves a new “✨ Studio version” take (MP4 by default) and keeps the original. The Camera panel's <i>🟩 Green screen</i> setting uses the same settings live: <i>Preview</i> shows the background but records the plain camera; <i>Record with background</i> builds it into the take.</p>
     <p><b>Home page:</b> shows are grouped into 🎵 Puppet shows and 📝 Text scripts (tap a header to fold it). Tap any show to open its page: play your practice <b>takes</b>, ⤓ Save one to Downloads, ✕ delete, or + Add video. Every ● Rec take is kept with its show in this app on this device — clearing Edge's site data would erase takes you haven't saved.</p>
     <p><b>⛶</b> on the control bar toggles fullscreen at any time. <b>⟲ Sync</b> on the control bar re-seats the display clock on the audio if the phone ever hiccups. With <i>Auto-resync</i> on (Settings → Timing) the show listens to the speaker and applies that correction by itself; stamps are never touched, and a corner note can show each correction.</p>
     <p><b>Show cues.</b> Warnings for yourself, separate from the script timings: an upcoming <b>character change</b> (made automatically from the script) or <b>your own note</b> ("wiggle Samuel", "fog on"). Add one in Word Lab with <b>C</b> at the clock, with <i>+ Cue before this line</i>, or in the script as <code>[CUE: get KING on right hand]</code> (<code>[CUE 5s: …]</code> sets its own warn‑ahead) on the line before it applies. The <b>Cues</b> tab (and ⋯ → Cues in the show) slides up the full list: tick/untick, edit the note, set warn‑ahead and style per cue. On the show screen, <b>while paused</b>, <b>press and hold a character pill</b> to add a cue before that line or manage the cues on it, and <b>hold a ROD or ♪ note</b> to turn it into a cue (a ♪ cue fires when the music starts, at the end of the line before it; a ROD cue at its line's start); text and blank space do nothing. While a cue is showing, <b>press and hold</b> the banner, card or the glow's label to hide that cue, stop warning for that character, warn earlier/later, edit it, change its style, or dismiss it for now. Style is layered: a cue's own style wins, then the show's style (top of the Cues sheet), then the default in Settings → Show cues; Settings shows a note when the open show overrides it. <i>Banner</i> (top or bottom strip with countdown), <i>Edge glow</i> (frame pulses in the character's colour, small label in a corner of your choice), <i>Inline</i> (a coloured rule in the script above the line it belongs to; a cue with only a time and no line shows as a card instead), <i>Card</i> (small card in a corner of your choice).</p>
@@ -743,6 +780,7 @@ KING (V.O.): Hear my command!
     <div class="cp-row"><span class="cp-lbl">View</span><div class="seg" id="cp-mode"><button data-v="off">Off</button><button data-v="full">Full screen</button><button data-v="corner">Corner</button></div></div>
     <div class="cp-row"><span class="cp-lbl">Camera</span><div class="seg" id="cp-facing"><button data-v="user">Front</button><button data-v="environment">Rear</button></div><button class="tbtn" id="cp-flip">⟲ Flip</button><button class="tbtn" id="cp-mirror">Mirror</button></div>
     <div class="cp-row"><span class="cp-lbl">Words under camera (open Fold)</span><div class="seg" id="cp-under"><button data-v="auto">Auto</button><button data-v="on">On</button><button data-v="off">Off</button></div></div>
+    <div class="cp-row"><span class="cp-lbl">🟩 Green screen (set it up in 🎬 Studio on any take)</span><div class="seg" id="cp-gs"><button data-v="off">Off</button><button data-v="preview">Preview</button><button data-v="record">Record with background</button></div></div>
     <div class="cp-row"><span class="cp-lbl">Script backdrop</span><span class="cp-end">see‑through</span><input type="range" id="cp-backdrop" min="0" max="95" step="5"><span class="cp-end">solid</span></div>
     <div class="cp-row"><span class="cp-lbl" id="cp-mic-lbl">Mic for recording</span><select id="cp-mic" style="flex:1;min-width:180px;padding:8px;border-radius:8px;background:var(--stage-black);color:inherit;border:1px solid #444"></select><button class="tbtn" id="cp-mic-refresh" title="Look for mics again (connect Bluetooth first)">↻</button></div>
     <div class="cp-note" id="cp-note">Each take is kept with this show (open the show from Home to watch it, or ⤓ Save to Downloads). The script is not in the video. Connect a Bluetooth mic first, then tap ↻ to see it in the list.</div>
@@ -1322,9 +1360,10 @@ async function openShowPage(id){const s=loadShows().find(x=>x.id===id);if(!s){re
   showScreen('showpage');window.scrollTo(0,0);await spRefresh();}
 async function spRefresh(keep){spTakes=await getTakes(spId);$('sp-count').textContent=spTakes.length?'· '+spTakes.length:'';
   if(!keep||!spTakes.find(t=>t.id===spCur))spCur=spTakes[0]?spTakes[0].id:null;spRenderPlayer();
-  $('sp-takes').innerHTML=spTakes.length?spTakes.map((t,i)=>`<div class="take ${t.id===spCur?'on':''}" data-id="${t.id}"><button class="tk-play" data-id="${t.id}">▶</button><div class="tk-info"><div><b>Take ${spTakes.length-i}</b>${t.added?' · added':''}</div><div class="tk-sub">${when(t.at)} · ${spFmt(t.dur)} · ${Math.max(1,Math.round((t.size||t.blob.size)/1048576))} MB</div></div><button class="small-btn tk-save" data-id="${t.id}">⤓ Save</button><button class="icon-btn tk-del" data-id="${t.id}">×</button></div>`).join('')
+  $('sp-takes').innerHTML=spTakes.length?spTakes.map((t,i)=>`<div class="take ${t.id===spCur?'on':''}" data-id="${t.id}"><button class="tk-play" data-id="${t.id}">▶</button><div class="tk-info"><div><b>Take ${spTakes.length-i}</b>${t.studio?' · ✨ Studio version':''}${t.added?' · added':''}</div><div class="tk-sub">${when(t.at)} · ${spFmt(t.dur)} · ${Math.max(1,Math.round((t.size||t.blob.size)/1048576))} MB</div></div><button class="small-btn tk-studio" data-id="${t.id}">🎬 Studio</button><button class="small-btn tk-save" data-id="${t.id}">⤓</button><button class="icon-btn tk-del" data-id="${t.id}">×</button></div>`).join('')
     :'<div class="empty" style="padding:8px 2px">No takes yet. Record one with ● Rec (turn on 📷 Camera first), or add a video.</div>';
   $('sp-takes').querySelectorAll('.tk-play,.tk-info').forEach(b=>b.onclick=()=>{spCur=b.dataset.id||b.parentNode.dataset.id;spRefresh(true).then(()=>{const v=$('sp-player').querySelector('video');if(v)v.play().catch(()=>{});});});
+  $('sp-takes').querySelectorAll('.tk-studio').forEach(b=>b.onclick=()=>openStudio(b.dataset.id));
   $('sp-takes').querySelectorAll('.tk-save').forEach(b=>b.onclick=()=>{const t=spTakes.find(x=>x.id===b.dataset.id);if(!t)return;const a=document.createElement('a');const u=URL.createObjectURL(t.blob);a.href=u;a.download=t.name||('PRACTICE - '+safeName(show&&show.name)+'.webm');document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),60000);toast('Saved to Downloads');});
   $('sp-takes').querySelectorAll('.tk-del').forEach(b=>b.onclick=async()=>{if(!confirm('Delete this take? This cannot be undone.'))return;await delTake(b.dataset.id);if(spCur===b.dataset.id)spCur=null;spRefresh(true);});}
 function spStopVideo(){const v=$('sp-player').querySelector('video');if(v)v.pause();}
@@ -1340,6 +1379,188 @@ $('sp-add').onclick=()=>$('sp-add-input').click();
 $('sp-add-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f||!spId)return;
   const dur=await new Promise(res=>{const v=document.createElement('video');v.preload='metadata';v.onloadedmetadata=()=>{res(isFinite(v.duration)?v.duration:0);URL.revokeObjectURL(v.src);};v.onerror=()=>res(0);v.src=URL.createObjectURL(f);});
   const ok=await putTake({id:uid(),showId:spId,blob:f,at:f.lastModified||Date.now(),dur,size:f.size,name:f.name,mime:f.type,added:true});toast(ok?'Video added':'Could not store the video (phone storage full?)');spCur=null;spRefresh();});
+
+// ================= 🎬 STUDIO: green screen + AI cutout =================
+const GS_DEF={mode:'green',key:[0.0,0.69,0.25],sim:0.25,smooth:0.08,spill:0.5,shrink:0,bright:0,contrast:0,blur:0,wrap:0.25,crop:null,bg:'g-sunset'};
+function gsGet(){return Object.assign({},GS_DEF,settings.gs||{});}
+function gsSave(p){settings.gs=Object.assign(gsGet(),p);saveSettings();}
+const GS_BUILTIN=[['g-sunset','Sunset',['#f6c86b','#e08a3c','#7a3b1d']],['g-sky','Sky',['#bfe6ff','#6fb3f2','#2f6fc8']],['g-purple','Night',['#5b2a86','#2c1450','#120822']],['g-stage','Stage',['#7a1020','#4a0812','#1a0306']],['g-meadow','Meadow',['#cfeeb0','#7fc35a','#3f7d2a']],
+  ['c-yellow','Yellow',['#ffd400']],['c-white','White',['#ffffff']],['c-black','Black',['#000000']],['c-blue','Blue',['#1e5bd8']]];
+// custom backgrounds (photos/videos) in their own database
+let bgdbp=null;
+function bgdb(){if(bgdbp)return bgdbp;bgdbp=new Promise((res,rej)=>{const r=indexedDB.open('stage_prompter_bgs',1);r.onupgradeneeded=()=>r.result.createObjectStore('bgs',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});return bgdbp;}
+async function bgAll(){try{const d=await bgdb();return await new Promise(res=>{const r=d.transaction('bgs').objectStore('bgs').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([]);});}catch(e){return[];}}
+async function bgPut(o){try{const d=await bgdb();await new Promise((res,rej)=>{const x=d.transaction('bgs','readwrite');x.objectStore('bgs').put(o);x.oncomplete=res;x.onerror=()=>rej(x.error);});return true;}catch(e){return false;}}
+async function bgDel(id){try{const d=await bgdb();await new Promise(res=>{const x=d.transaction('bgs','readwrite');x.objectStore('bgs').delete(id);x.oncomplete=res;x.onerror=res;});}catch(e){}}
+// a background "source": paints itself, cover-fit, into a 2D canvas of the output size
+const bgCache={};
+async function bgSource(id){if(bgCache[id])return bgCache[id];let src;
+  const b=GS_BUILTIN.find(x=>x[0]===id);
+  if(b){src={kind:'paint',paint:(ctx,w,h)=>{if(b[2].length===1){ctx.fillStyle=b[2][0];ctx.fillRect(0,0,w,h);return;}const g=ctx.createLinearGradient(0,0,0,h);b[2].forEach((c,i)=>g.addColorStop(i/(b[2].length-1),c));ctx.fillStyle=g;ctx.fillRect(0,0,w,h);}};}
+  else{const all=await bgAll();const o=all.find(x=>x.id===id);if(!o)return bgSource('g-sunset');const url=URL.createObjectURL(o.blob);
+    if((o.type||'').startsWith('video')){const v=document.createElement('video');v.src=url;v.muted=true;v.loop=true;v.playsInline=true;v.preload='auto';try{await v.play();}catch(e){}src={kind:'video',el:v};}
+    else{const im=new Image();im.src=url;try{await im.decode();}catch(e){}src={kind:'image',el:im};}}
+  src.id=id;bgCache[id]=src;return src;}
+function bgCover(ctx,el,w,h){const iw=el.videoWidth||el.naturalWidth||el.width,ih=el.videoHeight||el.naturalHeight||el.height;if(!iw||!ih){ctx.fillStyle='#000';ctx.fillRect(0,0,w,h);return;}const s=Math.max(w/iw,h/ih);const dw=iw*s,dh=ih*s;ctx.drawImage(el,(w-dw)/2,(h-dh)/2,dw,dh);}
+function bgPaint(src,ctx,w,h,blur){ctx.save();ctx.filter=blur>0?`blur(${Math.round(blur*Math.max(w,h)/60)}px)`:'none';if(blur>0){ctx.translate(w/2,h/2);ctx.scale(1.08,1.08);ctx.translate(-w/2,-h/2);}
+  if(src.kind==='paint')src.paint(ctx,w,h);else bgCover(ctx,src.el,w,h);ctx.restore();}
+
+// --- WebGL keyer (one per canvas) ---
+const GS_VS='attribute vec2 p;varying vec2 uv;void main(){uv=vec2(p.x*0.5+0.5,0.5-p.y*0.5);gl_Position=vec4(p,0.,1.);}';
+const GS_FS=`precision mediump float;varying vec2 uv;uniform sampler2D fg,bg,mk;uniform vec3 key;uniform float sim,smooth,spill,shrink,bright,contrast,wrap,useAi,view;uniform vec4 crop;uniform vec2 px;
+vec2 cbcr(vec3 c){return vec2(dot(c,vec3(-0.1687,-0.3313,0.5))+0.5,dot(c,vec3(0.5,-0.4187,-0.0813))+0.5);}
+float am(vec2 q){if(q.x<crop.x||q.y<crop.y||q.x>crop.z||q.y>crop.w)return 0.;
+  if(useAi>0.5){float m=texture2D(mk,q).r;float s=max(smooth,0.02);return smoothstep(0.5-s*2.,0.5+s*2.,m);}
+  float d=distance(cbcr(texture2D(fg,q).rgb),cbcr(key))-sim;return pow(clamp(d/max(smooth,0.002),0.,1.),1.5);}
+void main(){vec4 f=texture2D(fg,uv);if(view>1.5){gl_FragColor=vec4(f.rgb,1.);return;}
+  float a=am(uv);vec2 o=px*(1.5+abs(shrink)*4.);
+  if(abs(shrink)>0.01){float n=min(min(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),min(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));float x=max(max(am(uv+vec2(o.x,0.)),am(uv-vec2(o.x,0.))),max(am(uv+vec2(0.,o.y)),am(uv-vec2(0.,o.y))));a=shrink>0.?mix(a,n,clamp(shrink,0.,1.)):mix(a,x,clamp(-shrink,0.,1.));}
+  if(view>0.5){gl_FragColor=vec4(vec3(a),1.);return;}
+  vec3 c=f.rgb;
+  if(useAi<0.5){float d=distance(cbcr(c),cbcr(key))-sim;float sv=pow(clamp(d/(0.01+spill*0.15),0.,1.),1.5);float de=dot(c,vec3(0.2126,0.7152,0.0722));c=mix(vec3(de),c,sv);c.g=min(c.g,max(c.r,c.b)+ (1.-spill)*0.25+0.02);}
+  c=(c-0.5)*(1.+contrast)+0.5+bright;
+  vec3 b=texture2D(bg,uv).rgb;vec3 outc=mix(b,c,a);
+  if(wrap>0.01){vec2 r=px*10.;float ring=(am(uv+vec2(r.x,0.))+am(uv-vec2(r.x,0.))+am(uv+vec2(0.,r.y))+am(uv-vec2(0.,r.y)))*0.25;
+    vec3 bb=(texture2D(bg,uv+vec2(r.x,0.)).rgb+texture2D(bg,uv-vec2(r.x,0.)).rgb+texture2D(bg,uv+vec2(0.,r.y)).rgb+texture2D(bg,uv-vec2(0.,r.y)).rgb)*0.25;
+    outc=mix(outc,bb,clamp(wrap*(1.-ring)*a*0.8,0.,1.));}
+  gl_FragColor=vec4(clamp(outc,0.,1.),1.);}`;
+function makeKeyer(canvas){const gl=canvas.getContext('webgl',{preserveDrawingBuffer:true,premultipliedAlpha:false,alpha:false});if(!gl)return null;
+  const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))console.warn(gl.getShaderInfoLog(o));return o;};
+  const pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,GS_VS));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,GS_FS));gl.linkProgram(pr);gl.useProgram(pr);
+  const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);const loc=gl.getAttribLocation(pr,'p');gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const tex=i=>{const t=gl.createTexture();gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,t);[gl.TEXTURE_WRAP_S,gl.TEXTURE_WRAP_T].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.CLAMP_TO_EDGE));[gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER].forEach(k=>gl.texParameteri(gl.TEXTURE_2D,k,gl.LINEAR));return t;};
+  const T=[tex(0),tex(1),tex(2)];const U=n=>gl.getUniformLocation(pr,n);gl.uniform1i(U('fg'),0);gl.uniform1i(U('bg'),1);gl.uniform1i(U('mk'),2);
+  const bgc=document.createElement('canvas');const bctx=bgc.getContext('2d');let bgKey='';
+  return{canvas,gl,
+    async render(src,w,h,o,mask){if(!w||!h)return;if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;bgKey='';}gl.viewport(0,0,w,h);
+      gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,T[0]);try{gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,src);}catch(e){return;}
+      const bs=o.bgSrc;const k=bs?(bs.id+'|'+w+'x'+h+'|'+o.blur):'none';
+      if(bs&&(bs.kind==='video'||k!==bgKey)){if(bgc.width!==w||bgc.height!==h){bgc.width=w;bgc.height=h;}bgPaint(bs,bctx,w,h,o.blur);gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,T[1]);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,bgc);bgKey=k;}
+      if(o.mode==='ai'&&mask){gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,T[2]);gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);gl.texImage2D(gl.TEXTURE_2D,0,gl.LUMINANCE,mask.w,mask.h,0,gl.LUMINANCE,gl.UNSIGNED_BYTE,mask.data);}
+      const c=o.crop||[0,0,1,1];gl.uniform3fv(U('key'),o.key);gl.uniform1f(U('sim'),o.sim);gl.uniform1f(U('smooth'),o.smooth);gl.uniform1f(U('spill'),o.spill);gl.uniform1f(U('shrink'),o.shrink);gl.uniform1f(U('bright'),o.bright);gl.uniform1f(U('contrast'),o.contrast);gl.uniform1f(U('wrap'),o.wrap);
+      gl.uniform1f(U('useAi'),o.mode==='ai'?1:0);gl.uniform1f(U('view'),o.view||0);gl.uniform4f(U('crop'),c[0],c[1],c[2],c[3]);gl.uniform2f(U('px'),1/w,1/h);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);}};}
+// --- AI cutout (people only), MediaPipe selfie segmenter, loaded on first use ---
+let gsSegP=null,gsSegTs=0,gsMaskBuf=null;
+function gsSegLoad(){if(gsSegP)return gsSegP;gsSegP=(async()=>{const base='https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';const v=await import(base+'/vision_bundle.mjs');const fs=await v.FilesetResolver.forVisionTasks(base+'/wasm');
+  return v.ImageSegmenter.createFromOptions(fs,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite',delegate:'GPU'},runningMode:'VIDEO',outputCategoryMask:false,outputConfidenceMasks:true});})();
+  gsSegP.catch(()=>{gsSegP=null;});return gsSegP;}
+function gsSegment(seg,src){gsSegTs+=33;let out=null;try{const r=seg.segmentForVideo(src,gsSegTs);const ms=r.confidenceMasks||[];const m=ms[ms.length>1?1:0];if(m){const f=m.getAsFloat32Array();if(!gsMaskBuf||gsMaskBuf.length!==f.length)gsMaskBuf=new Uint8Array(f.length);for(let i=0;i<f.length;i++)gsMaskBuf[i]=f[i]*255;out={w:m.width,h:m.height,data:gsMaskBuf};}r.close&&r.close();}catch(e){console.warn('segment',e);}return out;}
+function gsFit(w,h,max){const s=Math.min(1,max/Math.max(w,h));return[Math.round(w*s/2)*2,Math.round(h*s/2)*2];}
+async function gsOpts(showId,view){const g=gsGet();const rem=(settings.gsShowBg||{})[showId];const bgSrc=await bgSource(rem||g.bg);return Object.assign({},g,{bgSrc,view:view||0});}
+
+// --- Studio screen ---
+const st={take:null,url:null,keyer:null,raf:0,view:0,before:false,pick:false,tab:'key',seg:null,opts:null,busy:false,showId:null};
+async function openStudio(takeId){const t=spTakes.find(x=>x.id===takeId);if(!t)return;spStopVideo();st.take=t;st.showId=t.showId;
+  if(st.url)URL.revokeObjectURL(st.url);st.url=URL.createObjectURL(t.blob);const v=$('st-src');v.src=st.url;v.currentTime=0;
+  if(!st.keyer){st.keyer=makeKeyer($('st-canvas'));if(!st.keyer){toast('This browser cannot run Studio (no WebGL)');return;}}
+  const i=spTakes.length-spTakes.indexOf(t);$('st-title').textContent='🎬 Studio · Take '+i;st.before=false;st.pick=false;
+  showScreen('studio');window.scrollTo(0,0);await stRefreshOpts();stRenderTab();stLoop();}
+async function stRefreshOpts(){st.opts=await gsOpts(st.showId,st.view);const g=gsGet();if(g.mode==='ai'&&!st.seg){$('st-status').textContent='Loading the AI cutout model (first time needs internet)…';try{st.seg=await gsSegLoad();$('st-status').textContent='';}catch(e){$('st-status').textContent='Could not load the AI model. Check the internet and try again.';}}}
+function stLoop(){cancelAnimationFrame(st.raf);const v=$('st-src');const step=()=>{if(!$('studio').classList.contains('active'))return;
+    if(v.readyState>=2&&st.opts){const[w,h]=gsFit(v.videoWidth,v.videoHeight,1280);const o=Object.assign({},st.opts,{view:st.before?2:st.view});const mk=(o.mode==='ai'&&st.seg&&!st.before)?gsSegment(st.seg,v):null;st.keyer.render(v,w,h,o,mk);}
+    $('st-play').textContent=v.paused?'▶':'❚❚';if(v.duration&&isFinite(v.duration)){$('st-scrub').max=v.duration;$('st-scrub').value=v.currentTime;}$('st-time').textContent=spFmt(v.currentTime)+' / '+spFmt(isFinite(v.duration)?v.duration:(st.take&&st.take.dur||0));
+    stDrawCrop();st.raf=requestAnimationFrame(step);};st.raf=requestAnimationFrame(step);}
+function stDrawCrop(){const box=$('st-cropbox');const c=gsGet().crop;if(st.tab!=='crop'||!c){box.style.display='none';return;}const cv=$('st-canvas').getBoundingClientRect(),wr=$('st-wrap').getBoundingClientRect();
+  box.style.display='block';box.style.left=(cv.left-wr.left+c[0]*cv.width)+'px';box.style.top=(cv.top-wr.top+c[1]*cv.height)+'px';box.style.width=((c[2]-c[0])*cv.width)+'px';box.style.height=((c[3]-c[1])*cv.height)+'px';}
+function stSet(p){gsSave(p);Object.assign(st.opts,p);}
+function stSlider(id,label,key,min,max,stepv,fmt){const g=gsGet();return`<div class="st-row"><span class="st-l">${label}</span><input type="range" id="${id}" min="${min}" max="${max}" step="${stepv}" value="${g[key]}" data-k="${key}"><span class="st-v" id="${id}-v">${fmt?fmt(g[key]):''}</span></div>`;}
+async function stRenderTab(){const g=gsGet();document.querySelectorAll('#st-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===st.tab));const P=$('st-panel');const pct=v=>Math.round(v*100)+'';
+  if(st.tab==='key'){const pr=Object.keys(settings.gsPresets||{});
+    P.innerHTML=`<div class="st-row"><span class="st-l">Method</span><div class="seg" id="st-mode"><button data-v="green">Green screen</button><button data-v="ai">AI cutout</button></div></div>
+    <div class="st-note" id="st-ai-note" style="${g.mode==='ai'?'':'display:none'}">AI cutout is <b>for people only</b>. Puppets may disappear or flicker. Use the green screen for puppet shows.</div>
+    <div id="st-green-only" style="${g.mode==='ai'?'display:none':''}"><div class="st-row"><span class="st-l">Key color</span><span id="st-swatch" style="width:26px;height:26px;border-radius:6px;border:1px solid #555;background:rgb(${g.key.map(x=>Math.round(x*255)).join(',')})"></span><button class="tbtn" id="st-pick">💧 Tap the green</button></div>
+    ${stSlider('st-sim','Similarity','sim',0.05,0.8,0.01,pct)}${stSlider('st-spill','Green spill cleanup','spill',0,1,0.05,pct)}</div>
+    ${stSlider('st-smooth','Smoothness','smooth',0.005,0.3,0.005,pct)}
+    <div class="st-row"><span class="st-l">View</span><div class="seg" id="st-view"><button data-v="0">Result</button><button data-v="1">Matte (B/W)</button></div></div>
+    <div class="st-row"><span class="st-l">Preset</span><select id="st-preset"><option value="">Choose…</option>${pr.map(n=>`<option>${esc(n)}</option>`).join('')}</select><button class="tbtn" id="st-psave">Save as…</button>${pr.length?'<button class="tbtn" id="st-pdel">Delete</button>':''}</div>
+    <div class="st-note">Tip: in Matte view, white = kept, black = replaced. Raise Similarity until the screen is solid black, then lower it if you start losing parts of yourself or the puppets.</div>`;
+    P.querySelectorAll('#st-mode button').forEach(b=>{b.classList.toggle('on',b.dataset.v===g.mode);b.onclick=async()=>{stSet({mode:b.dataset.v});await stRefreshOpts();stRenderTab();};});
+    P.querySelectorAll('#st-view button').forEach(b=>{b.classList.toggle('on',+b.dataset.v===st.view);b.onclick=()=>{st.view=+b.dataset.v;stRenderTab();};});
+    const pk=$('st-pick');if(pk)pk.onclick=()=>{st.pick=true;st.before=true;toast('Tap the green screen in the picture');$('st-before').classList.add('on');};
+    $('st-preset').onchange=e=>{const p=(settings.gsPresets||{})[e.target.value];if(p){stSet(JSON.parse(JSON.stringify(p)));stRefreshOpts().then(stRenderTab);toast('Preset loaded');}};
+    $('st-psave').onclick=()=>{const n=prompt('Name this preset (for example: Living room)');if(!n)return;const ps=settings.gsPresets||{};const g2=gsGet();ps[n.trim()]={mode:g2.mode,key:g2.key,sim:g2.sim,smooth:g2.smooth,spill:g2.spill,shrink:g2.shrink,bright:g2.bright,contrast:g2.contrast,wrap:g2.wrap,blur:g2.blur,crop:g2.crop};settings.gsPresets=ps;saveSettings();stRenderTab();toast('Preset saved');};
+    const pd=$('st-pdel');if(pd)pd.onclick=()=>{const n=$('st-preset').value;if(!n){toast('Choose a preset first');return;}const ps=settings.gsPresets||{};delete ps[n];settings.gsPresets=ps;saveSettings();stRenderTab();};}
+  else if(st.tab==='bg'){const cust=await bgAll();const cur=st.opts&&st.opts.bgSrc?st.opts.bgSrc.id:g.bg;const rem=!!(settings.gsShowBg||{})[st.showId];
+    const tile=(id,name,style,del)=>`<button class="st-bg ${id===cur?'on':''}" data-id="${id}" style="${style}"><span>${esc(name)}</span>${del?`<i class="st-bgdel" data-id="${id}">×</i>`:''}</button>`;
+    P.innerHTML=`<div class="st-bgs">${GS_BUILTIN.map(b=>tile(b[0],b[1],`background:${b[2].length>1?`linear-gradient(180deg,${b[2].join(',')})`:b[2][0]}`)).join('')}
+      ${cust.map(o=>tile(o.id,(o.type||'').startsWith('video')?'🎞 '+o.name:o.name,'background:#333',true)).join('')}<button class="st-bg st-add" id="st-bgadd"><span>+ Photo<br>or video</span></button></div>
+      <label class="st-row"><input type="checkbox" id="st-rem" ${rem?'checked':''}> Remember this background for this show</label>
+      ${stSlider('st-blur','Background blur','blur',0,1,0.05,pct)}${stSlider('st-wrap','Light wrap (blend edges)','wrap',0,1,0.05,pct)}
+      <div class="st-note">Video backgrounds loop. They're saved in this app on this device.</div>`;
+    cust.forEach(async o=>{if((o.type||'').startsWith('image')){const el=P.querySelector(`.st-bg[data-id="${o.id}"]`);if(el){const u=URL.createObjectURL(o.blob);el.style.background=`center/cover url(${u})`;}}});
+    P.querySelectorAll('.st-bg[data-id]').forEach(b=>b.onclick=async e=>{if(e.target.classList.contains('st-bgdel'))return;const id=b.dataset.id;stSet({bg:id});if(settings.gsShowBg&&settings.gsShowBg[st.showId]){settings.gsShowBg[st.showId]=id;saveSettings();}await stRefreshOpts();stRenderTab();});
+    P.querySelectorAll('.st-bgdel').forEach(x=>x.onclick=async e=>{e.stopPropagation();if(!confirm('Remove this background?'))return;await bgDel(x.dataset.id);delete bgCache[x.dataset.id];if(gsGet().bg===x.dataset.id)stSet({bg:'g-sunset'});await stRefreshOpts();stRenderTab();});
+    $('st-bgadd').onclick=()=>$('st-bg-input').click();
+    $('st-rem').onchange=e=>{const m=settings.gsShowBg||{};if(e.target.checked)m[st.showId]=cur;else delete m[st.showId];settings.gsShowBg=m;saveSettings();};}
+  else if(st.tab==='edges'){P.innerHTML=`${stSlider('st-shrink','Shrink / grow outline','shrink',-1,1,0.05,v=>v>0?'shrink '+Math.round(v*100):v<0?'grow '+Math.round(-v*100):'0')}
+      ${stSlider('st-bright','Brightness (you / puppets)','bright',-0.3,0.3,0.01,v=>Math.round(v*100))}${stSlider('st-contrast','Contrast (you / puppets)','contrast',-0.5,0.5,0.01,v=>Math.round(v*100))}
+      <div class="st-note">Shrink trims a green halo around the edges. Grow brings back thin parts (fingers, puppet hair) that got cut away.</div>`;}
+  else if(st.tab==='crop'){P.innerHTML=`<div class="st-note" style="font-size:13px">Drag a box on the picture around the part to keep. Anything outside the box is replaced by the background, which is handy when the green screen doesn't reach the edges.</div><div class="st-row"><button class="tbtn" id="st-cropreset">Reset crop (keep everything)</button></div>`;
+    $('st-cropreset').onclick=()=>{stSet({crop:null});};}
+  P.querySelectorAll('input[type=range][data-k]').forEach(r=>{const out=$(r.id+'-v');r.oninput=()=>{const k=r.dataset.k;const v=+r.value;Object.assign(st.opts,{[k]:v});if(out){const g2=Object.assign(gsGet(),{[k]:v});out.textContent=k==='shrink'?(v>0?'shrink '+Math.round(v*100):v<0?'grow '+Math.round(-v*100):'0'):['bright','contrast'].includes(k)?Math.round(v*100):Math.round(v*100);}};r.onchange=()=>gsSave({[r.dataset.k]:+r.value});});}
+function stUV(e){const r=$('st-canvas').getBoundingClientRect();return[Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))];}
+(function(){const cv=$('st-canvas');let drag=null;
+  cv.addEventListener('pointerdown',e=>{const[u,v]=stUV(e);
+    if(st.pick){const vid=$('st-src');const c=document.createElement('canvas');c.width=Math.max(1,vid.videoWidth>>2);c.height=Math.max(1,vid.videoHeight>>2);const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(vid,0,0,c.width,c.height);
+      const px=Math.round(u*(c.width-1)),py=Math.round(v*(c.height-1));const d=x.getImageData(Math.max(0,px-2),Math.max(0,py-2),5,5).data;let r=0,g=0,b=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];n++;}
+      const key=[r/n/255,g/n/255,b/n/255];stSet({key});st.pick=false;st.before=false;$('st-before').classList.remove('on');stRenderTab();toast('Green picked');return;}
+    if(st.tab==='crop'){drag=[u,v];cv.setPointerCapture(e.pointerId);}});
+  cv.addEventListener('pointermove',e=>{if(!drag)return;const[u,v]=stUV(e);const c=[Math.min(drag[0],u),Math.min(drag[1],v),Math.max(drag[0],u),Math.max(drag[1],v)];st.opts.crop=c;settings.gs=Object.assign(gsGet(),{crop:c});});
+  const end=()=>{if(!drag)return;drag=null;const c=gsGet().crop;if(c&&(c[2]-c[0]<0.05||c[3]-c[1]<0.05))stSet({crop:null});else saveSettings();};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);})();
+$('st-tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.pick=false;stRenderTab();});
+$('st-play').onclick=()=>{const v=$('st-src');if(v.paused)v.play().catch(()=>{});else v.pause();};
+$('st-scrub').oninput=e=>{$('st-src').currentTime=+e.target.value;};
+$('st-before').onclick=()=>{st.before=!st.before;$('st-before').classList.toggle('on',st.before);};
+$('st-back').onclick=()=>{if(st.busy)return;$('st-src').pause();cancelAnimationFrame(st.raf);openShowPage(st.showId);};
+$('st-bg-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const id='u-'+uid();const ok=await bgPut({id,name:f.name.replace(/\.[^.]+$/,'').slice(0,18),type:f.type,blob:f});if(!ok){toast('Could not store that file');return;}stSet({bg:id});if(settings.gsShowBg&&settings.gsShowBg[st.showId]){settings.gsShowBg[st.showId]=id;saveSettings();}await stRefreshOpts();stRenderTab();toast('Background added');});
+document.querySelectorAll('#st-format button').forEach(b=>b.onclick=()=>{settings.gsFormat=b.dataset.v;saveSettings();document.querySelectorAll('#st-format button').forEach(x=>x.classList.toggle('on',x===b));});
+
+// --- Make video ---
+function stProgress(p,msg){$('st-prog').classList.add('on');$('st-prog-bar').style.width=Math.round(p*100)+'%';$('st-prog-msg').textContent=msg||('Making video… '+Math.round(p*100)+'%');}
+$('st-cancel').onclick=()=>{st.cancel=true;};
+$('st-make').onclick=async()=>{if(st.busy||!st.take)return;st.busy=true;st.cancel=false;const v=$('st-src');v.pause();
+  const fmt=settings.gsFormat||'mp4';const opts=await gsOpts(st.showId,0);if(opts.mode==='ai'){try{st.seg=await gsSegLoad();}catch(e){toast('AI model not loaded; check the internet');st.busy=false;return;}}
+  let blob=null,how='';stProgress(0,'Getting ready…');
+  try{if(fmt==='mp4'&&window.VideoEncoder&&opts.bgSrc.kind!=='video'){blob=await stMakeFast(opts);how='fast';}}catch(e){console.warn('fast export failed, using real-time',e);blob=null;}
+  if(!blob&&!st.cancel){try{blob=await stMakeRealtime(opts,fmt);how='realtime';}catch(e){console.warn(e);}}
+  $('st-prog').classList.remove('on');st.busy=false;stLoop();
+  if(st.cancel){toast('Cancelled');return;}if(!blob){toast('Could not make the video on this device');return;}
+  const ext=/mp4/.test(blob.type)?'mp4':'webm';const d=new Date();const stamp=d.toISOString().slice(0,10)+' '+String(d.getHours()).padStart(2,'0')+'.'+String(d.getMinutes()).padStart(2,'0');const sh=loadShows().find(x=>x.id===st.showId);
+  const ok=await putTake({id:uid(),showId:st.showId,blob,at:Date.now(),dur:st.take.dur,size:blob.size,name:'STUDIO - '+safeName(sh&&sh.name)+' - '+stamp+'.'+ext,mime:blob.type,studio:true});
+  if(fmt==='mp4'&&ext!=='mp4')toast('This phone could not make MP4, so it was saved as WebM');else toast(ok?'✨ Studio version saved with this show':'Could not save (phone storage full?)');
+  if(ok){$('st-src').pause();cancelAnimationFrame(st.raf);openShowPage(st.showId);}};
+async function stMakeFast(opts){const MB=await import('https://cdn.jsdelivr.net/npm/mediabunny@1.61.6/+esm');
+  const input=new MB.Input({source:new MB.BlobSource(st.take.blob),formats:MB.ALL_FORMATS});const target=new MB.BufferTarget();const output=new MB.Output({format:new MB.Mp4OutputFormat({fastStart:'in-memory'}),target});
+  const kc=document.createElement('canvas');const K=makeKeyer(kc);let W=0,H=0,slow=false;const t0=performance.now();const dur=st.take.dur||10;
+  const vc=(await MB.canEncodeVideo('avc'))?'avc':((await MB.canEncodeVideo('vp9'))?'vp9':null);const ac=(await MB.canEncodeAudio('aac'))?'aac':((await MB.canEncodeAudio('opus'))?'opus':null);if(!vc)throw new Error('no video encoder');
+  const conv=await MB.Conversion.init({input,output,showWarnings:false,
+    video:{forceTranscode:true,codec:vc,process:async s=>{if(st.cancel)throw new Error('cancel');if(slow)throw new Error('slow');const src=s.toCanvasImageSource();if(!W){[W,H]=gsFit(s.displayWidth,s.displayHeight,1280);}const mk=opts.mode==='ai'&&st.seg?gsSegment(st.seg,src):null;await K.render(src,W,H,opts,mk);return kc;}},
+    audio:ac?{codec:ac}:{discard:true}});
+  const hadAudio=(await input.getAudioTracks()).length>0;
+  if(!conv.isValid||(hadAudio&&!ac)||(hadAudio&&conv.discardedTracks.some(d=>d.track.isAudioTrack&&d.track.isAudioTrack())))throw new Error('mp4 not possible here');
+  conv.onProgress=p=>{stProgress(p);const el=(performance.now()-t0)/1000;if(p>0.04&&el/p>dur*1.5+4)slow=true;};await conv.execute();return new Blob([target.buffer],{type:'video/mp4'});}
+function stMakeRealtime(opts,fmt){return new Promise(async(res,rej)=>{const v=document.createElement('video');v.src=st.url;v.playsInline=true;v.preload='auto';v.muted=false;
+  await new Promise(r=>{v.onloadedmetadata=r;v.onerror=r;});const kc=document.createElement('canvas');const K=makeKeyer(kc);const[W,H]=gsFit(v.videoWidth||720,v.videoHeight||1280,1280);kc.width=W;kc.height=H;
+  const vs=kc.captureStream(30);let tracks=[...vs.getVideoTracks()];try{const as=(v.captureStream||v.mozCaptureStream).call(v);tracks.push(...as.getAudioTracks());}catch(e){}
+  const types=fmt==='mp4'?['video/mp4;codecs=avc1,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm']:['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];const mime=types.find(t=>MediaRecorder.isTypeSupported(t))||'';
+  let rec;try{rec=new MediaRecorder(new MediaStream(tracks),mime?{mimeType:mime,videoBitsPerSecond:6000000}:{});}catch(e){rej(e);return;}const chunks=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  rec.onstop=()=>res(st.cancel?null:new Blob(chunks,{type:rec.mimeType||mime||'video/webm'}));
+  const dur=isFinite(v.duration)?v.duration:(st.take.dur||1);let done=false;
+  const draw=()=>{if(done)return;if(st.cancel){done=true;v.pause();rec.stop();return;}if(v.readyState>=2){const mk=opts.mode==='ai'&&st.seg?gsSegment(st.seg,v):null;K.render(v,W,H,opts,mk);}stProgress(Math.min(1,v.currentTime/dur),'Making video (plays through once)… '+Math.round(Math.min(1,v.currentTime/dur)*100)+'%');
+    if(v.requestVideoFrameCallback)v.requestVideoFrameCallback(draw);else requestAnimationFrame(draw);};
+  v.onended=()=>{if(done)return;done=true;setTimeout(()=>rec.stop(),200);};
+  rec.start(1000);try{await v.play();}catch(e){rej(e);return;}draw();});}
+
+// --- Live green screen on the camera (Preview / Record with background) ---
+const gsl={keyer:null,canvas:null,raf:0,opts:null,on:false};
+function gsLiveMode(){return settings.gsLive||'off';}
+async function gsLiveApply(camOn){const want=camOn&&gsLiveMode()!=='off';document.body.classList.toggle('gs-live',want);
+  if(!want){gsl.on=false;cancelAnimationFrame(gsl.raf);return;}
+  if(!gsl.canvas){gsl.canvas=document.createElement('canvas');gsl.canvas.id='cam-gs';gsl.keyer=makeKeyer(gsl.canvas);if(!gsl.keyer){toast('Live green screen needs WebGL');return;}}
+  const full=document.body.classList.contains('cam-full');const host=full?$('perf'):$('cam-pip');if(gsl.canvas.parentNode!==host){if(full)$('perf').insertBefore(gsl.canvas,$('cam-backdrop'));else host.appendChild(gsl.canvas);}
+  gsl.canvas.classList.toggle('cam-mirror',$('cam-video').classList.contains('cam-mirror'));
+  gsl.opts=await gsOpts(show&&show.id,0);if(gsl.opts.mode==='ai'){try{gsl.seg=await gsSegLoad();}catch(e){toast('AI model not loaded; check the internet');}}
+  if(gsl.on)return;gsl.on=true;const v=$('cam-video');const step=()=>{if(!gsl.on)return;if(v.readyState>=2&&v.videoWidth){const[w,h]=gsFit(v.videoWidth,v.videoHeight,gsLiveMode()==='record'?1280:960);const mk=gsl.opts.mode==='ai'&&gsl.seg?gsSegment(gsl.seg,v):null;gsl.keyer.render(v,w,h,gsl.opts,mk);}gsl.raf=requestAnimationFrame(step);};gsl.raf=requestAnimationFrame(step);}
 
 // ================= NEW SHOW =================
 let nsAudio=null,nsScriptText='';
@@ -1826,11 +2047,12 @@ async function camApply(){const c=camSet();const onPerf=$('perf').classList.cont
   const mir=c.mirror&&c.facing==='user';$('cam-video').classList.toggle('cam-mirror',mir);$('cam-pip-video').classList.toggle('cam-mirror',mir);
   $('cam-pip').className=c.corner;camBarH();$('t-rec').style.display=want?'':'none';
   if(want){await camStart();}else{if(cam.rec)camRecStop();camStopStream();}
+  if(typeof gsLiveApply==='function')gsLiveApply(want&&!!cam.stream);
   renderCamPanel();}
 function camBarH(){const t=$('thumb');let h=0;if(t){const r=t.getBoundingClientRect();if(r.height>0&&getComputedStyle(t).visibility!=='hidden'&&+getComputedStyle(t).opacity>0.05)h=Math.max(0,innerHeight-r.top);}document.documentElement.style.setProperty('--bar-h',h+'px');}
 function camUnderOn(){const u=camSet().under;if(u==='on')return true;if(u==='off')return false;const w=innerWidth,h=innerHeight;return w>=600&&w/h>0.7&&w/h<1.3;}
 addEventListener('resize',()=>{if(cam.stream||camSet().mode!=='off')camApply();});
-function renderCamPanel(){camBarH();document.querySelectorAll('#cp-under button').forEach(b=>b.classList.toggle('on',b.dataset.v===camSet().under));const c=camSet();document.querySelectorAll('#cp-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.mode));document.querySelectorAll('#cp-facing button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.facing));
+function renderCamPanel(){camBarH();document.querySelectorAll('#cp-gs button').forEach(b=>b.classList.toggle('on',b.dataset.v===(settings.gsLive||'off')));document.querySelectorAll('#st-format button').forEach(b=>b.classList.toggle('on',b.dataset.v===(settings.gsFormat||'mp4')));document.querySelectorAll('#cp-under button').forEach(b=>b.classList.toggle('on',b.dataset.v===camSet().under));const c=camSet();document.querySelectorAll('#cp-mode button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.mode));document.querySelectorAll('#cp-facing button').forEach(b=>b.classList.toggle('on',b.dataset.v===c.facing));
   $('cp-mirror').classList.toggle('on',c.mirror);$('cp-mirror').textContent=c.mirror?'Mirror ✓':'Mirror';$('cp-backdrop').value=c.backdrop;renderMicList();
   $('cp-backdrop').disabled=c.mode!=='full';$('p-cam').classList.toggle('on',c.mode!=='off');}
 $('p-cam').onclick=()=>{$('cam-panel').classList.toggle('open');renderCamPanel();};$('cp-close').onclick=()=>$('cam-panel').classList.remove('open');
@@ -1846,6 +2068,7 @@ async function renderMicList(force){const sel=$('cp-mic');if(!sel)return;const c
   let cur=c.micId;if(textMode&&!cur)cur='default';if(!opts.some(o=>o[0]===cur))cur=textMode?'default':'';
   sel.innerHTML=opts.map(o=>`<option value="${esc(o[0])}">${esc(o[1])}</option>`).join('');sel.value=cur;
   $('cp-mic-lbl').textContent=textMode?'Mic for recording':'Record';}
+document.querySelectorAll('#cp-gs button').forEach(b=>b.onclick=()=>{if(cam.rec){toast('Stop recording first');return;}settings.gsLive=b.dataset.v;saveSettings();camApply();});
 document.querySelectorAll('#cp-under button').forEach(b=>b.onclick=()=>{settings.camUnder=b.dataset.v;saveSettings();camApply();});
 $('cp-mic').onchange=e=>{settings.camMicId=e.target.value;settings.camMic=!!e.target.value;saveSettings();};
 $('cp-mic-refresh').onclick=()=>renderMicList(true);
@@ -1860,7 +2083,7 @@ $('t-cam').onclick=e=>{e.stopPropagation();$('cam-panel').classList.toggle('open
 function recMime(){const opts=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];return opts.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';}
 async function camRecStart(){if(cam.counting)return;if(!cam.stream&&!(await camStart()))return;if(!window.MediaRecorder){toast('Recording is not supported in this browser');return;}
   const textMode=mode==='text';let micId=camSet().micId;if(textMode&&!micId)micId='default';
-  const tracks=[...cam.stream.getVideoTracks()];
+  const tracks=(gsLiveMode()==='record'&&gsl.on&&gsl.canvas)?[...gsl.canvas.captureStream(30).getVideoTracks()]:[...cam.stream.getVideoTracks()];
   const micC=micId&&micId!=='default'?{deviceId:{exact:micId}}:{};
   if(textMode){try{cam.micStream=await navigator.mediaDevices.getUserMedia({audio:micC.deviceId?micC:true});tracks.push(...cam.micStream.getAudioTracks());}catch(e){toast('Microphone not allowed; recording video only');}}
   else{try{if(await smEnsure()){if(!cam.dest){cam.dest=sm.ctx.createMediaStreamDestination();sm.src.connect(cam.dest);}tracks.push(...cam.dest.stream.getAudioTracks());}}catch(e){console.warn('show audio not captured',e);}
@@ -2381,7 +2604,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.54');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.55');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
