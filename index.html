@@ -528,7 +528,7 @@ body[data-layout=C] .glbl{display:block}
 <body>
 
 <!-- ===== HOME ===== -->
-<div id="ver-label" title="Tap to copy version">v3.61</div>
+<div id="ver-label" title="Tap to copy version">v3.62</div>
 <div id="home" class="screen active">
   <div class="header">
     <span style="width:44px"></span>
@@ -1280,7 +1280,7 @@ async function wake(on){wantWake=!!on;
   if(document.visibilityState!=='visible')return;
   if('wakeLock' in navigator){try{if(!wakeLock||wakeLock.released){wakeLock=await navigator.wakeLock.request('screen');wakeMode='lock';wakeLock.addEventListener('release',()=>{wakeLock=null;if(wantWake)setTimeout(()=>wake(true),500);});}return;}catch(e){/* refused (battery saver, policy) → fall back */}}
   wakeVideo(true);}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wantWake)wake(true);if(document.visibilityState==='hidden'&&typeof cam!=='undefined'&&cam.rec)camRecStop();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wantWake)wake(true);if(typeof cam!=='undefined'){clearTimeout(cam.hideT);if(document.visibilityState==='hidden'&&cam.rec)cam.hideT=setTimeout(()=>{if(document.visibilityState==='hidden'&&cam.rec)camRecStop();},4000);}});
 document.addEventListener('fullscreenchange',()=>{if(wantWake)setTimeout(()=>wake(true),300);});
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');document.body.classList.toggle('performing',id==='perf');
@@ -1410,7 +1410,7 @@ async function spLaunchText(record){spStopVideo();const s=loadShows().find(x=>x.
   textChars=show.characters||[];$('text-input-area').value=show.textContent||'';spReturn=spId;
   if(record&&camSet().mode==='off'){settings.camMode='full';saveSettings();}
   startTextPerf();if(record)setTimeout(()=>{if(cam.stream)camRecCountdown();else setTimeout(()=>camRecCountdown(),800);},700);}
-$('sp-back').onclick=()=>{spStopVideo();spId=null;showScreen('home');renderHome();};
+$('sp-back').onclick=()=>{resumeClear();spStopVideo();spId=null;showScreen('home');renderHome();};
 $('sp-add').onclick=()=>$('sp-add-input').click();
 $('sp-add-input').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f||!spId)return;
   const dur=await new Promise(res=>{const v=document.createElement('video');v.preload='metadata';v.onloadedmetadata=()=>{res(isFinite(v.duration)?v.duration:0);URL.revokeObjectURL(v.src);};v.onerror=()=>res(0);v.src=URL.createObjectURL(f);});
@@ -2168,10 +2168,22 @@ $('q-fs').onclick=()=>$('d-fs').click();$('q-settings').onclick=()=>$('d-setting
 // ================= CAMERA MODE + PRACTICE RECORDING =================
 const cam={stream:null,facing:null,rec:null,chunks:[],recStart:0,recTimer:null,micStream:null,dest:null};
 function camSet(){return{mode:settings.camMode||'off',facing:settings.camFacing||'user',mirror:settings.camMirror!==false,backdrop:settings.camBackdrop!=null?+settings.camBackdrop:55,mic:!!settings.camMic,under:settings.camUnder||'auto',micId:settings.camMicId!=null?settings.camMicId:(settings.camMic?'default':''),corner:settings.camCorner||'bl'};}
+// ---- fold / unfold: reconnect the camera, keep everything else going ----
+function foldIsOpen(){const w=innerWidth,h=innerHeight;return w>=600&&w/h>0.7;}
+let camReconnecting=false;
+async function camReconnect(why){if(camReconnecting||!cam.stream)return;camReconnecting=true;try{const st0=cam.stream;st0.getTracks().forEach(t=>{t.onended=null;t.onmute=null;t.stop();});cam.stream=null;cam.facing=null;
+    await new Promise(r=>setTimeout(r,350));let ok=false;for(let i=0;i<3&&!ok;i++){ok=await camStartQuiet();if(!ok)await new Promise(r=>setTimeout(r,700));}
+    if(ok){if(settings.camLock&&typeof camLock==='function')setTimeout(()=>camLock(true,true),800);if(typeof gsLiveApply==='function')gsLiveApply(true);}else toast('Camera could not reconnect. Tap 📷 to try again.');}
+  finally{camReconnecting=false;}}
+async function camStartQuiet(){const c=camSet();try{cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:c.facing,width:{ideal:1920},height:{ideal:1080}},audio:false});cam.facing=c.facing;
+    $('cam-video').srcObject=cam.stream;$('cam-pip-video').srcObject=cam.stream;try{await $('cam-video').play();}catch(e){}try{await $('cam-pip-video').play();}catch(e){}
+    const tk=cam.stream.getVideoTracks()[0];if(tk){tk.onended=()=>camReconnect('ended');tk.onmute=()=>setTimeout(()=>{if(tk.muted&&tk.readyState==='live')camReconnect('mute');},900);}cam.foldOpen=foldIsOpen();return true;}catch(e){cam.stream=null;return false;}}
+let foldT=null;addEventListener('resize',()=>{clearTimeout(foldT);foldT=setTimeout(()=>{if(cam.stream&&cam.foldOpen!==foldIsOpen()){cam.foldOpen=foldIsOpen();camReconnect('fold');}},500);});
 async function camStart(){const c=camSet();if(cam.stream&&cam.facing===c.facing)return true;camStopStream();
   if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)){toast('Camera not available in this browser');return false;}
   try{cam.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:c.facing,width:{ideal:1920},height:{ideal:1080}},audio:false});cam.facing=c.facing;
-    $('cam-video').srcObject=cam.stream;$('cam-pip-video').srcObject=cam.stream;try{await $('cam-video').play();}catch(e){}try{await $('cam-pip-video').play();}catch(e){}return true;}
+    $('cam-video').srcObject=cam.stream;$('cam-pip-video').srcObject=cam.stream;try{await $('cam-video').play();}catch(e){}try{await $('cam-pip-video').play();}catch(e){}
+    const tk=cam.stream.getVideoTracks()[0];if(tk){tk.onended=()=>camReconnect('ended');tk.onmute=()=>setTimeout(()=>{if(tk.muted&&tk.readyState==='live')camReconnect('mute');},900);}cam.foldOpen=foldIsOpen();return true;}
   catch(e){cam.stream=null;toast(location.protocol==='https:'?'Camera was not allowed ('+e.name+')':'Camera needs the web address: open mykegeter.github.io/stage-prompter');settings.camMode='off';saveSettings();camApply();return false;}}
 function camStopStream(){if(cam.stream){cam.stream.getTracks().forEach(t=>t.stop());cam.stream=null;cam.facing=null;}$('cam-video').srcObject=null;$('cam-pip-video').srcObject=null;}
 async function camApply(){const c=camSet();const onPerf=$('perf').classList.contains('active')&&(mode==='perform'||mode==='text');const want=onPerf&&c.mode!=='off';document.body.classList.toggle('cam-text',want&&mode==='text');document.body.classList.toggle('cam-under',want&&camUnderOn());const tc=$('t-cam');if(tc){tc.style.display=onPerf&&mode==='text'?'':'none';tc.classList.toggle('on',c.mode!=='off');}
@@ -2217,7 +2229,7 @@ $('t-cam').onclick=e=>{e.stopPropagation();$('cam-panel').classList.toggle('open
 function recMime(){const opts=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'];return opts.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';}
 async function camRecStart(){if(cam.counting)return;if(!cam.stream&&!(await camStart()))return;if(!window.MediaRecorder){toast('Recording is not supported in this browser');return;}
   const textMode=mode==='text';let micId=camSet().micId;if(textMode&&!micId)micId='default';
-  const tracks=(gsLiveMode()==='record'&&gsl.on&&gsl.canvas)?[...gsl.canvas.captureStream(30).getVideoTracks()]:[...cam.stream.getVideoTracks()];
+  const tracks=[...camRecVideoTracks()];
   const micC=micId&&micId!=='default'?{deviceId:{exact:micId}}:{};
   if(textMode){try{cam.micStream=cam.preMicP?await cam.preMicP:null;cam.preMicP=null;if(!cam.micStream)cam.micStream=await navigator.mediaDevices.getUserMedia({audio:micC.deviceId?micC:true});tracks.push(...cam.micStream.getAudioTracks());}catch(e){toast('Microphone not allowed; recording video only');}}
   else{try{if(await smEnsure()){if(!cam.dest){cam.dest=sm.ctx.createMediaStreamDestination();sm.src.connect(cam.dest);}tracks.push(...cam.dest.stream.getAudioTracks());}}catch(e){console.warn('show audio not captured',e);}
@@ -2238,10 +2250,15 @@ async function camRecCountdown(){if(mode!=='text'){camRecStart();return;}if(auto
   for(const n of [3,2,1]){$('rc-num').textContent=n;await new Promise(r=>setTimeout(r,1000));if(!cam.counting){el.classList.remove('on');return;}}
   el.classList.remove('on');cam.counting=false;camRecStart();}
 $('rc-cancel').onclick=e=>{e.stopPropagation();cam.counting=false;$('rec-count').classList.remove('on');if(cam.preMicP){cam.preMicP.then(st=>{if(st)st.getTracks().forEach(t=>t.stop());});cam.preMicP=null;}toast('Recording cancelled');};
+function camRecVideoTracks(){const v=$('cam-video');const ai=gsLiveMode()==='record'&&gsGet().mode==='ai';const[w,h]=gsFit(v.videoWidth||1080,v.videoHeight||1920,ai?960:1280);
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d',{alpha:false});cam.recCan=c;
+  const draw=()=>{if(cam.recCan!==c)return;const src=(gsLiveMode()==='record'&&gsl.on&&gsl.canvas&&gsl.canvas.width)?gsl.canvas:((v.readyState>=2&&v.videoWidth)?v:null);if(src&&!camReconnecting){try{bgCover(x,src,w,h);}catch(e){}}};
+  const loop=()=>{if(cam.recCan!==c)return;draw();cam.recRaf=requestAnimationFrame(loop);};loop();cam.recIv=setInterval(()=>{if(document.hidden)draw();},66);
+  return c.captureStream(30).getVideoTracks();}
 function recElapsed(){if(!cam.recStart)return 0;const now=cam.pauseAt||Date.now();return Math.max(0,(now-cam.recStart-(cam.pausedMs||0))/1000);}
 $('t-pauserec').onclick=e=>{e.stopPropagation();if(!cam.rec)return;if(cam.rec.state==='recording'){cam.rec.pause();cam.pauseAt=Date.now();if(autoScroll)stopAutoScroll();$('t-pauserec').classList.add('on');$('t-pauserec').textContent='▶ Resume rec';$('rec-ind').style.opacity=.5;}
   else if(cam.rec.state==='paused'){cam.pausedMs+=Date.now()-cam.pauseAt;cam.pauseAt=0;cam.rec.resume();if(mode==='text'&&!autoScroll)startAutoScroll();$('t-pauserec').classList.remove('on');$('t-pauserec').textContent='❚❚ Pause rec';$('rec-ind').style.opacity=1;}};
-function camRecStop(){if(cam.pauseAt){cam.pausedMs+=Date.now()-cam.pauseAt;cam.pauseAt=0;}$('rec-ind').style.opacity=1;if(cam.counting){cam.counting=false;$('rec-count').classList.remove('on');}if(cam.rec&&cam.rec.state!=='inactive')cam.rec.stop();clearInterval(cam.recTimer);document.body.classList.remove('recording');$('t-rec').classList.remove('on');$('t-rec').textContent='● Rec';$('rec-time').textContent='0:00';
+function camRecStop(){cam.recCan=null;cancelAnimationFrame(cam.recRaf);clearInterval(cam.recIv);if(cam.pauseAt){cam.pausedMs+=Date.now()-cam.pauseAt;cam.pauseAt=0;}$('rec-ind').style.opacity=1;if(cam.counting){cam.counting=false;$('rec-count').classList.remove('on');}if(cam.rec&&cam.rec.state!=='inactive')cam.rec.stop();clearInterval(cam.recTimer);document.body.classList.remove('recording');$('t-rec').classList.remove('on');$('t-rec').textContent='● Rec';$('rec-time').textContent='0:00';
   if(cam.micStream){cam.micStream.getTracks().forEach(t=>t.stop());cam.micStream=null;}if(cam.micNode){try{cam.micNode.disconnect();}catch(e){}cam.micNode=null;}}
 $('t-rec').onclick=e=>{e.stopPropagation();if(cam.rec||cam.counting)camRecStop();else camRecCountdown();};
 // ---- text-script tools ----
@@ -2392,7 +2409,7 @@ $('se-save').onclick=()=>{const parsed=parseScript($('se-text').value,show.chara
   const msg=[`${parsed.cues.length} lines`];if(stats.changedLines)msg.push(`${stats.changedLines} changed`);if(stats.untimedWords)msg.push(`${stats.untimedWords} word${stats.untimedWords>1?'s':''} need timing`);if(stats.lost)msg.push(`${stats.lost} removed`);
   toast(msg.join(' · '));returnFromScript();};
 $('d-clearall').onclick=()=>{if(mode==='text')return;if(!confirm('Clear ALL cue times for this show? Lines and text are kept.'))return;show.cues.forEach(c=>{c.time=null;c.end=null;if(c.words)c.words=c.words.map(()=>({start:null}));});persistShow(show);$('drawer').classList.remove('open');setMode('rehearse');toast('All times cleared');};
-$('d-exit').onclick=()=>{$('drawer').classList.remove('open');stopAutoScroll();if(mode!=='text'){persistShow(show);}pause();if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(spReturn){const r=spReturn;spReturn=null;openShowPage(r);}else showScreen(mode==='text'?'textinput':'home');};
+$('d-exit').onclick=()=>{resumeClear();$('drawer').classList.remove('open');stopAutoScroll();if(mode!=='text'){persistShow(show);}pause();if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});if(spReturn){const r=spReturn;spReturn=null;openShowPage(r);}else showScreen(mode==='text'?'textinput':'home');};
 
 // timeline
 function tlWindow(){const dur=audio.duration||1;if(!tlZoom)return[0,dur];const w=60;let s=audio.currentTime-w/2;s=Math.max(0,Math.min(dur-w,s));return[s,Math.max(s+w,s+1)];}
@@ -2784,7 +2801,7 @@ $('wl-nextuntimed').onclick=()=>{const n=show.cues.length;for(let k=1;k<=n;k++){
 $('wl-restore').onclick=()=>{if(!show.backup){toast('No previous version saved');return;}if(!confirm('Restore the script and timings from before the last Script save?'))return;const cur=JSON.parse(JSON.stringify({cues:show.cues,characters:show.characters}));show.cues=show.backup.cues;show.characters=show.backup.characters;show.backup=cur;persistShow(show);wl.ci=Math.min(wl.ci,show.cues.length-1);renderWordLab();toast('Previous script restored');};
 $('wl-scriptview').onclick=openScriptView;
 $('wl-fullguide').onclick=e=>{e.preventDefault();openHelp();};
-$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.61');toast('Version copied');}catch(e){}};
+$('ver-label').onclick=()=>{try{navigator.clipboard.writeText('Geters Teleprompter v3.62');toast('Version copied');}catch(e){}};
 $('wl-save').onclick=()=>{persistShow(show);toast('Saved');};
 audio.addEventListener('seeking',()=>{if(audio.currentTime<1)cueDismissed.clear();});
 $('wl-backup').onclick=()=>{persistShow(show);backupShow(loadShows().find(x=>x.id===show.id)||show);};
@@ -2854,6 +2871,13 @@ document.addEventListener('keydown',e=>{if(!$('perf').classList.contains('active
 
 // ================= INIT =================
 applySettings();renderHome();renderKeyHelp();
+function resumeSave(){try{if(!$('perf').classList.contains('active')||!show||!show.id){resumeClear();return;}sessionStorage.setItem('sp_resume',JSON.stringify({id:show.id,type:show.type==='text'?'text':'audio',t:audio.currentTime||0,top:$('tele').scrollTop,auto:!!autoScroll,mode,at:Date.now()}));}catch(e){}}
+function resumeClear(){try{sessionStorage.removeItem('sp_resume');}catch(e){}}
+setInterval(resumeSave,1500);addEventListener('pagehide',resumeSave);
+(async()=>{let r=null;try{r=JSON.parse(sessionStorage.getItem('sp_resume')||'null');}catch(e){}if(!r||Date.now()-r.at>15*60000)return;const s0=loadShows().find(x=>x.id===r.id);if(!s0)return;
+  if(r.type==='text'){show=JSON.parse(JSON.stringify(s0));applyFontSize(show.fontSize!=null?show.fontSize:settings.fontSize);textChars=show.characters||[];$('text-input-area').value=show.textContent||'';spReturn=s0.id;startTextPerf();setTimeout(()=>{$('tele').scrollTop=r.top||0;},150);}
+  else{spReturn=s0.id;await openShow(s0.id);if($('perf').classList.contains('active')){if(r.mode&&r.mode!==mode)setMode(r.mode);try{audio.currentTime=r.t||0;if(typeof snapClock==='function')snapClock();}catch(e){}setTimeout(()=>{if(typeof freeScroll==='function')freeScroll(true);},120);}}
+  toast('Picked up where you left off');})();
 if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
